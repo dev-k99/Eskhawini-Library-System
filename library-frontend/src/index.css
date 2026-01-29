@@ -1,0 +1,92 @@
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap");
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 text-gray-100 min-h-screen;
+  }
+}
+
+@layer components {
+  .btn-primary {
+    @apply bg-gradient-to-r from-primary-500 to-primary-600 hover:from-primary-600 hover:to-primary-700 
+           text-white font-medium py-2.5 px-5 rounded-xl transition-all duration-300 
+           shadow-lg shadow-primary-500/25 hover:shadow-primary-500/40 hover:scale-105
+           disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100;
+  }
+
+  .btn-secondary {
+    @apply bg-gray-700/50 hover:bg-gray-600/50 text-gray-100 font-medium py-2.5 px-5 
+           rounded-xl transition-all duration-300 border border-gray-600/50 hover:border-gray-500/50
+           backdrop-blur-sm;
+  }
+
+  .btn-accent {
+    @apply bg-gradient-to-r from-accent-500 to-accent-600 hover:from-accent-600 hover:to-accent-700 
+           text-white font-medium py-2.5 px-5 rounded-xl transition-all duration-300 
+           shadow-lg shadow-accent-500/25 hover:shadow-accent-500/40 hover:scale-105;
+  }
+
+  .card {
+    @apply bg-gray-800/50 backdrop-blur-xl rounded-2xl border border-gray-700/50 
+           shadow-xl transition-all duration-300 hover:border-primary-500/30;
+  }
+
+  .card-hover {
+    @apply card hover:shadow-2xl hover:shadow-primary-500/10 hover:-translate-y-1;
+  }
+
+  .input-field {
+    @apply w-full bg-gray-700/50 border border-gray-600/50 rounded-xl py-3 px-4 
+           text-gray-100 placeholder-gray-400 focus:outline-none focus:ring-2 
+           focus:ring-primary-500/50 focus:border-primary-500/50 transition-all duration-300;
+  }
+
+  .glass {
+    @apply bg-white/5 backdrop-blur-lg border border-white/10;
+  }
+
+  .gradient-text {
+    @apply bg-clip-text text-transparent bg-gradient-to-r from-primary-400 to-accent-400;
+  }
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(31, 41, 55, 0.5);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(75, 85, 99, 0.8);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(107, 114, 128, 0.8);
+}
+
+/* Voice recording animation */
+.voice-pulse {
+  animation: voicePulse 1.5s ease-in-out infinite;
+}
+
+@keyframes voicePulse {
+  0%,
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.1);
+    opacity: 0.7;
+  }
+}
