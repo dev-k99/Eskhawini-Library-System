@@ -1,0 +1,34 @@
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+.vs/
+[Bb]in/
+[Oo]bj/
+[Dd]ebug/
+[Rr]elease/
+*.nupkg
+project.lock.json
+.nuget/
+packages/
+*.lock.json
+
+# Frontend
+library-frontend/node_modules/
+library-frontend/dist/
+library-frontend/.env.local
+
+# IDE
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Environment
+.env
+*.env.local
+appsettings.Development.json
+LibraryManagement.API/appsettings.Production.json
