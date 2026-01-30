@@ -9,8 +9,9 @@ import {
 } from 'lucide-react';
 
 export default function Dashboard() {
-  const { user, isLibrarian } = useAuth();
+  const { user, isLibrarian, isAdmin } = useAuth();
   const [myLoans, setMyLoans] = useState([]);
+  const [allLoans, setAllLoans] = useState([]);
   const [stats, setStats] = useState(null);
   const [loading, setLoading] = useState(true);
   const [notifications, setNotifications] = useState([]);
@@ -18,10 +19,15 @@ export default function Dashboard() {
   useEffect(() => {
     const fetchData = async () => {
       try {
+        // Regular users get their own loans
         const loansResponse = await loansApi.getMy();
         setMyLoans(loansResponse.data);
 
-        if (isLibrarian) {
+        // Librarians and Admins get all loans + stats
+        if (isLibrarian || isAdmin) {
+          const allLoansResponse = await loansApi.getAll();
+          setAllLoans(allLoansResponse.data);
+          
           const statsResponse = await analyticsApi.getSummary();
           setStats(statsResponse.data);
         }
@@ -54,7 +60,7 @@ export default function Dashboard() {
         signalRService.leaveUserGroup(user.id);
       }
     };
-  }, [user, isLibrarian]);
+  }, [user, isLibrarian, isAdmin]);
 
   if (loading) {
     return (
@@ -64,7 +70,9 @@ export default function Dashboard() {
     );
   }
 
-  const activeLoans = myLoans.filter(l => l.status === 'Active');
+  // For admins/librarians, show all loans stats
+  const displayLoans = (isLibrarian || isAdmin) ? allLoans : myLoans;
+  const activeLoans = displayLoans.filter(l => l.status === 'Active');
   const overdueLoans = activeLoans.filter(l => new Date(l.dueDate) < new Date());
 
   return (
@@ -75,7 +83,9 @@ export default function Dashboard() {
           Welcome back, {user?.name?.split(' ')[0]}! 👋
         </h1>
         <p className="text-gray-400 mt-2">
-          Your library dashboard is ready with the latest updates.
+          {isAdmin ? 'Admin dashboard - Full system overview' : 
+           isLibrarian ? 'Librarian dashboard - Manage library operations' :
+           'Your library dashboard is ready with the latest updates.'}
         </p>
       </div>
 
@@ -109,7 +119,9 @@ export default function Dashboard() {
         <div className="card p-5">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm text-gray-400">Active Loans</p>
+              <p className="text-sm text-gray-400">
+                {(isLibrarian || isAdmin) ? 'Total Active Loans' : 'Active Loans'}
+              </p>
               <p className="text-2xl font-bold text-gray-100 mt-1">{activeLoans.length}</p>
             </div>
             <div className="p-3 bg-primary-500/20 rounded-xl">
@@ -121,7 +133,9 @@ export default function Dashboard() {
         <div className="card p-5">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm text-gray-400">Overdue</p>
+              <p className="text-sm text-gray-400">
+                {(isLibrarian || isAdmin) ? 'Total Overdue' : 'Overdue'}
+              </p>
               <p className={`text-2xl font-bold mt-1 ${
                 overdueLoans.length > 0 ? 'text-red-400' : 'text-gray-100'
               }`}>
@@ -138,7 +152,7 @@ export default function Dashboard() {
           </div>
         </div>
 
-        {isLibrarian && stats && (
+        {(isLibrarian || isAdmin) && stats && (
           <>
             <div className="card p-5">
               <div className="flex items-center justify-between">
@@ -170,7 +184,9 @@ export default function Dashboard() {
       {/* Active Loans */}
       <div className="card">
         <div className="p-5 border-b border-gray-700/50 flex items-center justify-between">
-          <h2 className="text-xl font-semibold text-gray-100">Your Active Loans</h2>
+          <h2 className="text-xl font-semibold text-gray-100">
+            {(isLibrarian || isAdmin) ? 'Recent Active Loans' : 'Your Active Loans'}
+          </h2>
           <Link to="/loans" className="text-primary-400 hover:text-primary-300 flex items-center gap-1">
             View All <ArrowRight className="h-4 w-4" />
           </Link>
@@ -179,10 +195,14 @@ export default function Dashboard() {
         {activeLoans.length === 0 ? (
           <div className="p-8 text-center">
             <BookOpen className="h-12 w-12 mx-auto text-gray-600 mb-3" />
-            <p className="text-gray-400">No active loans</p>
-            <Link to="/books" className="btn-primary inline-flex items-center gap-2 mt-4">
-              Browse Catalog <ArrowRight className="h-4 w-4" />
-            </Link>
+            <p className="text-gray-400">
+              {(isLibrarian || isAdmin) ? 'No active loans in the system' : 'No active loans'}
+            </p>
+            {!isLibrarian && !isAdmin && (
+              <Link to="/books" className="btn-primary inline-flex items-center gap-2 mt-4">
+                Browse Catalog <ArrowRight className="h-4 w-4" />
+              </Link>
+            )}
           </div>
         ) : (
           <div className="divide-y divide-gray-700/50">
@@ -199,10 +219,13 @@ export default function Dashboard() {
                   <div className="flex-1 min-w-0">
                     <h3 className="font-medium text-gray-100 truncate">{loan.bookTitle}</h3>
                     <p className="text-sm text-gray-400">
+                      {(isLibrarian || isAdmin) && loan.userName && (
+                        <span>Borrowed by {loan.userName} • </span>
+                      )}
                       Due: {dueDate.toLocaleDateString()}
                     </p>
                   </div>
-                  <div className={`px-3 py-1 rounded-lg text-sm ${
+                  <div className={`px-3 py-1 rounded-lg text-sm whitespace-nowrap ${
                     isOverdue 
                       ? 'bg-red-500/20 text-red-400' 
                       : daysLeft <= 3 
@@ -222,21 +245,43 @@ export default function Dashboard() {
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <Link to="/books" className="card-hover p-6 group">
           <BookOpen className="h-8 w-8 text-primary-400 mb-3 group-hover:scale-110 transition-transform" />
-          <h3 className="font-semibold text-gray-100">Browse Catalog</h3>
-          <p className="text-sm text-gray-400 mt-1">Find your next read</p>
+          <h3 className="font-semibold text-gray-100">
+            {(isLibrarian || isAdmin) ? 'Manage Catalog' : 'Browse Catalog'}
+          </h3>
+          <p className="text-sm text-gray-400 mt-1">
+            {(isLibrarian || isAdmin) ? 'Add and edit books' : 'Find your next read'}
+          </p>
         </Link>
 
         <Link to="/loans" className="card-hover p-6 group">
           <Clock className="h-8 w-8 text-accent-400 mb-3 group-hover:scale-110 transition-transform" />
-          <h3 className="font-semibold text-gray-100">My Loans</h3>
-          <p className="text-sm text-gray-400 mt-1">Manage your borrowings</p>
+          <h3 className="font-semibold text-gray-100">
+            {(isLibrarian || isAdmin) ? 'All Loans' : 'My Loans'}
+          </h3>
+          <p className="text-sm text-gray-400 mt-1">
+            {(isLibrarian || isAdmin) ? 'Manage all borrowings' : 'Manage your borrowings'}
+          </p>
         </Link>
 
-        <Link to="/sustainability" className="card-hover p-6 group">
-          <TrendingUp className="h-8 w-8 text-green-400 mb-3 group-hover:scale-110 transition-transform" />
-          <h3 className="font-semibold text-gray-100">Eco Impact</h3>
-          <p className="text-sm text-gray-400 mt-1">See your green footprint</p>
-        </Link>
+        {isAdmin ? (
+          <Link to="/users" className="card-hover p-6 group">
+            <Users className="h-8 w-8 text-green-400 mb-3 group-hover:scale-110 transition-transform" />
+            <h3 className="font-semibold text-gray-100">User Management</h3>
+            <p className="text-sm text-gray-400 mt-1">Manage users and roles</p>
+          </Link>
+        ) : (isLibrarian || isAdmin) ? (
+          <Link to="/analytics" className="card-hover p-6 group">
+            <TrendingUp className="h-8 w-8 text-green-400 mb-3 group-hover:scale-110 transition-transform" />
+            <h3 className="font-semibold text-gray-100">Analytics</h3>
+            <p className="text-sm text-gray-400 mt-1">View library statistics</p>
+          </Link>
+        ) : (
+          <Link to="/sustainability" className="card-hover p-6 group">
+            <TrendingUp className="h-8 w-8 text-green-400 mb-3 group-hover:scale-110 transition-transform" />
+            <h3 className="font-semibold text-gray-100">Eco Impact</h3>
+            <p className="text-sm text-gray-400 mt-1">See your green footprint</p>
+          </Link>
+        )}
       </div>
     </div>
   );

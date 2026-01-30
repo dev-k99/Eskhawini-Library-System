@@ -8,6 +8,7 @@ import LoansPage from './components/Loans/LoansPage';
 import AnalyticsPage from './components/Analytics/AnalyticsPage';
 import SustainabilityPage from './components/Sustainability/SustainabilityPage';
 import UsersAdminPage from './components/Admin/UsersAdminPage';
+import LandingPage from './components/LandingPage';
 
 function ProtectedRoute({ children }) {
   const { user, loading } = useAuth();
@@ -48,7 +49,9 @@ function PublicRoute({ children }) {
 function AppRoutes() {
   return (
     <Routes>
-      {/* Public Routes */}
+      {/* Landing page */}
+      <Route path="/welcome" element={<LandingPage />} />
+
       <Route
         path="/login"
         element={

@@ -1,139 +1,253 @@
-import { useState } from 'react';
-import { Link, useNavigate, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { 
-  BookOpen, Home, User, LogOut, Menu, X, 
-  BarChart2, Users, Clock, Leaf, Bell
+  BookOpen, 
+  Home, 
+  Book, 
+  Clock, 
+  TrendingUp, 
+  Leaf, 
+  Users,
+  BarChart3,
+  LogOut, 
+  Bell,
+  Menu,
+  X
 } from 'lucide-react';
+import { useState } from 'react';
 
 export default function Layout({ children }) {
-  const { user, logout, isAdmin, isLibrarian } = useAuth();
-  const navigate = useNavigate();
   const location = useLocation();
+  const navigate = useNavigate();
+  const { user, logout, isAdmin, isLibrarian } = useAuth();
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [notifications, setNotifications] = useState([]);
 
-  const handleLogout = () => {
-    logout();
+  const handleLogout = async () => {
+    await logout();
     navigate('/login');
   };
 
-  const navItems = [
-    { path: '/', icon: Home, label: 'Dashboard' },
-    { path: '/books', icon: BookOpen, label: 'Catalog' },
-    { path: '/loans', icon: Clock, label: 'My Loans' },
-    ...(isLibrarian ? [{ path: '/analytics', icon: BarChart2, label: 'Analytics' }] : []),
-    ...(isAdmin ? [{ path: '/users', icon: Users, label: 'Users' }] : []),
-    { path: '/sustainability', icon: Leaf, label: 'Eco Impact' },
-  ];
+  // Navigation items based on user role
+  const getNavItems = () => {
+    const baseItems = [
+      { icon: Home, label: 'Dashboard', path: '/' },
+      { icon: Book, label: 'Catalog', path: '/books' },
+      { icon: Clock, label: 'My Loans', path: '/loans' },
+      { icon: Leaf, label: 'Eco Impact', path: '/sustainability' },
+    ];
 
-  const isActive = (path) => location.pathname === path;
+    // Admin gets everything
+    if (isAdmin) {
+      return [
+        { icon: Home, label: 'Dashboard', path: '/' },
+        { icon: Book, label: 'Catalog', path: '/books' },
+        { icon: Clock, label: 'All Loans', path: '/loans' },
+        { icon: Users, label: 'Users', path: '/users' },
+        { icon: BarChart3, label: 'Analytics', path: '/analytics' },
+        { icon: Leaf, label: 'Sustainability', path: '/sustainability' },
+      ];
+    }
+
+    // Librarian gets some admin features
+    if (isLibrarian) {
+      return [
+        { icon: Home, label: 'Dashboard', path: '/' },
+        { icon: Book, label: 'Catalog', path: '/books' },
+        { icon: Clock, label: 'All Loans', path: '/loans' },
+        { icon: BarChart3, label: 'Analytics', path: '/analytics' },
+        { icon: Leaf, label: 'Sustainability', path: '/sustainability' },
+      ];
+    }
+
+    // Regular patrons get basic items
+    return baseItems;
+  };
+
+  const navItems = getNavItems();
+
+  const NavLinks = () => (
+    <>
+      {navItems.map((item) => {
+        const Icon = item.icon;
+        const isActive = location.pathname === item.path;
+        
+        return (
+          <Link
+            key={item.path}
+            to={item.path}
+            onClick={() => setSidebarOpen(false)}
+            className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-all ${
+              isActive
+                ? 'bg-primary-600/20 text-primary-400 font-medium'
+                : 'text-gray-400 hover:text-gray-200 hover:bg-gray-700/50'
+            }`}
+          >
+            <Icon className="h-5 w-5" />
+            <span>{item.label}</span>
+          </Link>
+        );
+      })}
+    </>
+  );
 
   return (
-    <div className="min-h-screen flex">
-      {/* Sidebar */}
-      <aside className={`
-        fixed lg:static inset-y-0 left-0 z-50 w-64 
-        bg-gray-800/80 backdrop-blur-xl border-r border-gray-700/50
-        transform transition-transform duration-300 ease-in-out
-        ${sidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
-      `}>
-        <div className="flex flex-col h-full">
-          {/* Logo */}
-          <div className="p-6 border-b border-gray-700/50">
-            <Link to="/" className="flex items-center gap-3">
-              <div className="p-2 bg-gradient-to-br from-primary-500 to-accent-500 rounded-xl">
-                <BookOpen className="h-6 w-6 text-white" />
-              </div>
-              <span className="text-xl font-bold gradient-text">LibraryOS</span>
-            </Link>
+    <div className="min-h-screen bg-gray-900 flex">
+      {/* Sidebar - Desktop */}
+      <aside className="hidden lg:flex flex-col w-64 bg-gray-800/50 backdrop-blur-xl border-r border-gray-700/50">
+        {/* Logo */}
+        <div className="p-6 border-b border-gray-700/50">
+          <Link to="/" className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary-500 to-accent-500 flex items-center justify-center">
+              <BookOpen className="h-6 w-6 text-white" />
+            </div>
+            <div>
+              <h1 className="text-xl font-bold gradient-text">LibraryOS</h1>
+              <p className="text-xs text-gray-400">
+                {isAdmin ? 'Admin Panel' : isLibrarian ? 'Librarian Panel' : 'Library System'}
+              </p>
+            </div>
+          </Link>
+        </div>
+
+        {/* Navigation */}
+        <nav className="flex-1 p-4 space-y-2">
+          <NavLinks />
+        </nav>
+
+        {/* User Section */}
+        <div className="p-4 border-t border-gray-700/50">
+          <div className="flex items-center gap-3 mb-3 p-3 bg-gray-700/50 rounded-xl">
+            <div className="w-10 h-10 rounded-full bg-gradient-to-br from-primary-500 to-accent-500 flex items-center justify-center">
+              <span className="text-white font-medium text-sm">
+                {user?.name?.charAt(0).toUpperCase()}
+              </span>
+            </div>
+            <div className="flex-1 min-w-0">
+              <p className="text-sm font-medium text-gray-100 truncate">{user?.name}</p>
+              <p className="text-xs text-gray-400">
+                {user?.role}
+                {isAdmin && ' 🛡️'}
+                {isLibrarian && !isAdmin && ' 📚'}
+              </p>
+            </div>
           </div>
+          <button
+            onClick={handleLogout}
+            className="w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-red-500/10 hover:bg-red-500/20 text-red-400 rounded-xl transition-colors"
+          >
+            <LogOut className="h-4 w-4" />
+            <span className="font-medium">Sign Out</span>
+          </button>
+        </div>
+      </aside>
 
-          {/* Navigation */}
-          <nav className="flex-1 p-4 space-y-2">
-            {navItems.map(({ path, icon: Icon, label }) => (
-              <Link
-                key={path}
-                to={path}
-                onClick={() => setSidebarOpen(false)}
-                className={`
-                  flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200
-                  ${isActive(path) 
-                    ? 'bg-primary-500/20 text-primary-400 border border-primary-500/30' 
-                    : 'text-gray-400 hover:bg-gray-700/50 hover:text-gray-100'}
-                `}
-              >
-                <Icon className="h-5 w-5" />
-                <span className="font-medium">{label}</span>
+      {/* Mobile Sidebar */}
+      {sidebarOpen && (
+        <div className="fixed inset-0 z-50 lg:hidden">
+          {/* Backdrop */}
+          <div 
+            className="absolute inset-0 bg-black/50 backdrop-blur-sm"
+            onClick={() => setSidebarOpen(false)}
+          />
+          
+          {/* Sidebar */}
+          <aside className="absolute left-0 top-0 bottom-0 w-64 bg-gray-800 flex flex-col">
+            {/* Logo */}
+            <div className="p-6 border-b border-gray-700/50 flex items-center justify-between">
+              <Link to="/" className="flex items-center gap-3" onClick={() => setSidebarOpen(false)}>
+                <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary-500 to-accent-500 flex items-center justify-center">
+                  <BookOpen className="h-6 w-6 text-white" />
+                </div>
+                <div>
+                  <h1 className="text-xl font-bold gradient-text">LibraryOS</h1>
+                  <p className="text-xs text-gray-400">
+                    {isAdmin ? 'Admin' : isLibrarian ? 'Librarian' : 'Library'}
+                  </p>
+                </div>
               </Link>
-            ))}
-          </nav>
+              <button
+                onClick={() => setSidebarOpen(false)}
+                className="p-2 hover:bg-gray-700/50 rounded-lg transition-colors"
+              >
+                <X className="h-5 w-5 text-gray-400" />
+              </button>
+            </div>
 
-          {/* User section */}
-          <div className="p-4 border-t border-gray-700/50">
-            <div className="card p-4">
-              <div className="flex items-center gap-3 mb-3">
+            {/* Navigation */}
+            <nav className="flex-1 p-4 space-y-2 overflow-y-auto">
+              <NavLinks />
+            </nav>
+
+            {/* User Section */}
+            <div className="p-4 border-t border-gray-700/50">
+              <div className="flex items-center gap-3 mb-3 p-3 bg-gray-700/50 rounded-xl">
                 <div className="w-10 h-10 rounded-full bg-gradient-to-br from-primary-500 to-accent-500 flex items-center justify-center">
-                  <User className="h-5 w-5 text-white" />
+                  <span className="text-white font-medium text-sm">
+                    {user?.name?.charAt(0).toUpperCase()}
+                  </span>
                 </div>
                 <div className="flex-1 min-w-0">
-                  <p className="font-medium text-gray-100 truncate">{user?.name}</p>
+                  <p className="text-sm font-medium text-gray-100 truncate">{user?.name}</p>
                   <p className="text-xs text-gray-400">{user?.role}</p>
                 </div>
               </div>
               <button
                 onClick={handleLogout}
-                className="w-full btn-secondary flex items-center justify-center gap-2 text-sm"
+                className="w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-red-500/10 hover:bg-red-500/20 text-red-400 rounded-xl transition-colors"
               >
                 <LogOut className="h-4 w-4" />
-                Sign Out
+                <span className="font-medium">Sign Out</span>
               </button>
             </div>
-          </div>
+          </aside>
         </div>
-      </aside>
-
-      {/* Mobile overlay */}
-      {sidebarOpen && (
-        <div 
-          className="fixed inset-0 bg-black/50 z-40 lg:hidden"
-          onClick={() => setSidebarOpen(false)}
-        />
       )}
 
-      {/* Main content */}
-      <main className="flex-1 flex flex-col min-h-screen">
-        {/* Top navbar */}
-        <header className="sticky top-0 z-30 bg-gray-900/80 backdrop-blur-xl border-b border-gray-700/50">
-          <div className="flex items-center justify-between px-4 py-3">
+      {/* Main Content */}
+      <div className="flex-1 flex flex-col min-h-screen">
+        {/* Top Bar - Mobile */}
+        <header className="lg:hidden sticky top-0 z-40 bg-gray-800/90 backdrop-blur-xl border-b border-gray-700/50 p-4">
+          <div className="flex items-center justify-between">
             <button
               onClick={() => setSidebarOpen(true)}
-              className="lg:hidden p-2 text-gray-400 hover:text-gray-100"
-              aria-label="Open menu"
+              className="p-2 hover:bg-gray-700/50 rounded-lg transition-colors"
             >
-              <Menu className="h-6 w-6" />
+              <Menu className="h-6 w-6 text-gray-100" />
             </button>
+            
+            <Link to="/" className="flex items-center gap-2">
+              <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-primary-500 to-accent-500 flex items-center justify-center">
+                <BookOpen className="h-5 w-5 text-white" />
+              </div>
+              <h1 className="text-lg font-bold gradient-text">LibraryOS</h1>
+            </Link>
 
-            <div className="flex-1" />
-
-            {/* Notifications */}
-            <button 
-              className="relative p-2 text-gray-400 hover:text-gray-100 transition-colors"
-              aria-label="Notifications"
-            >
-              <Bell className="h-5 w-5" />
-              {notifications.length > 0 && (
-                <span className="absolute top-1 right-1 w-2 h-2 bg-accent-500 rounded-full" />
-              )}
+            <button className="p-2 hover:bg-gray-700/50 rounded-lg transition-colors relative">
+              <Bell className="h-6 w-6 text-gray-100" />
+              <span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full"></span>
             </button>
           </div>
         </header>
 
-        {/* Page content */}
-        <div className="flex-1 p-4 md:p-6 lg:p-8">
-          {children}
-        </div>
-      </main>
+        {/* Page Content */}
+        <main className="flex-1 p-6 lg:p-8">
+          <div className="max-w-7xl mx-auto">
+            {children}
+          </div>
+        </main>
+
+        {/* Footer */}
+        <footer className="border-t border-gray-700/50 bg-gray-800/30 py-6 px-6 lg:px-8">
+          <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4 text-sm text-gray-400">
+            <p>© 2026 LibraryOS. All rights reserved.</p>
+            <div className="flex gap-6">
+              <a href="#" className="hover:text-gray-200 transition-colors">Privacy</a>
+              <a href="#" className="hover:text-gray-200 transition-colors">Terms</a>
+              <a href="#" className="hover:text-gray-200 transition-colors">Support</a>
+            </div>
+          </div>
+        </footer>
+      </div>
     </div>
   );
 }

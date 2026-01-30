@@ -70,7 +70,7 @@ export default function Login() {
                     value={name}
                     onChange={(e) => setName(e.target.value)}
                     className="input-field pl-12"
-                    placeholder="John Doe"
+                    placeholder="Kwanele Ntshangase"
                     required
                   />
                 </div>

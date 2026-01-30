@@ -5,17 +5,24 @@ import signalRService from '../services/signalr';
 const AuthContext = createContext(null);
 
 export function AuthProvider({ children }) {
-  const [user, setUser] = useState(null);
+  const [user, setUser] = useState(() => {
+    // Initialize state from localStorage
+    const storedUser = localStorage.getItem('user');
+    return storedUser ? JSON.parse(storedUser) : null;
+  });
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Check for existing auth
-    const storedUser = localStorage.getItem('user');
-    if (storedUser) {
-      setUser(JSON.parse(storedUser));
-      signalRService.connect();
-    }
-    setLoading(false);
+    // Only handle SignalR connection, not state updates
+    const initializeAuth = async () => {
+      const storedUser = localStorage.getItem('user');
+      if (storedUser) {
+        await signalRService.connect();
+      }
+      setLoading(false);
+    };
+
+    initializeAuth();
   }, []);
 
   const login = async (email, password) => {
@@ -58,25 +65,28 @@ export function AuthProvider({ children }) {
   const isAdmin = user?.role === 'Admin';
   const isLibrarian = user?.role === 'Librarian' || user?.role === 'Admin';
 
+  const value = {
+    user, 
+    login, 
+    register, 
+    logout, 
+    loading,
+    isAdmin,
+    isLibrarian
+  };
+
   return (
-    <AuthContext.Provider value={{ 
-      user, 
-      login, 
-      register, 
-      logout, 
-      loading,
-      isAdmin,
-      isLibrarian 
-    }}>
+    <AuthContext.Provider value={value}>
       {children}
     </AuthContext.Provider>
   );
 }
 
-export function useAuth() {
+// Export useAuth hook separately to avoid the eslint warning
+export const useAuth = () => {
   const context = useContext(AuthContext);
   if (!context) {
     throw new Error('useAuth must be used within an AuthProvider');
   }
   return context;
-}
+};
