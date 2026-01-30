@@ -1,6 +1,5 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider, useAuth } from './context/AuthContext';
-import Layout from './components/Layout/Layout';
 import Login from './components/Auth/Login';
 import Dashboard from './components/Dashboard/Dashboard';
 import BookCatalog from './components/Books/BookCatalog';
@@ -9,6 +8,7 @@ import AnalyticsPage from './components/Analytics/AnalyticsPage';
 import SustainabilityPage from './components/Sustainability/SustainabilityPage';
 import UsersAdminPage from './components/Admin/UsersAdminPage';
 import LandingPage from './components/LandingPage';
+import Layout from './components/Layout/Layout';  // ← Must be this path
 
 function ProtectedRoute({ children }) {
   const { user, loading } = useAuth();
