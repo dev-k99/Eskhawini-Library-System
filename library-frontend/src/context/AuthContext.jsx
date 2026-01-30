@@ -4,16 +4,29 @@ import signalRService from '../services/signalr';
 
 const AuthContext = createContext(null);
 
+// Role enum mapping (backend sends numbers)
+const UserRole = {
+  0: 'Patron',
+  1: 'Librarian', 
+  2: 'Admin'
+};
+
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(() => {
-    // Initialize state from localStorage
     const storedUser = localStorage.getItem('user');
-    return storedUser ? JSON.parse(storedUser) : null;
+    if (storedUser) {
+      const parsedUser = JSON.parse(storedUser);
+      // Convert numeric role to string if needed
+      if (typeof parsedUser.role === 'number') {
+        parsedUser.role = UserRole[parsedUser.role] || 'Patron';
+      }
+      return parsedUser;
+    }
+    return null;
   });
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Only handle SignalR connection, not state updates
     const initializeAuth = async () => {
       const storedUser = localStorage.getItem('user');
       if (storedUser) {
@@ -25,32 +38,46 @@ export function AuthProvider({ children }) {
     initializeAuth();
   }, []);
 
+  const normalizeUser = (userData) => {
+    // Convert numeric role to string
+    if (typeof userData.role === 'number') {
+      userData.role = UserRole[userData.role] || 'Patron';
+    }
+    return userData;
+  };
+
   const login = async (email, password) => {
     const response = await authApi.login({ email, password });
-    const { token, refreshToken, user } = response.data;
+    const { token, refreshToken, user: userData } = response.data;
+    
+    // Normalize the user data
+    const normalizedUser = normalizeUser({ ...userData });
     
     localStorage.setItem('token', token);
     localStorage.setItem('refreshToken', refreshToken);
-    localStorage.setItem('user', JSON.stringify(user));
+    localStorage.setItem('user', JSON.stringify(normalizedUser));
     
-    setUser(user);
+    setUser(normalizedUser);
     await signalRService.connect();
     
-    return user;
+    return normalizedUser;
   };
 
   const register = async (name, email, password) => {
     const response = await authApi.register({ name, email, password });
-    const { token, refreshToken, user } = response.data;
+    const { token, refreshToken, user: userData } = response.data;
+    
+    // Normalize the user data
+    const normalizedUser = normalizeUser({ ...userData });
     
     localStorage.setItem('token', token);
     localStorage.setItem('refreshToken', refreshToken);
-    localStorage.setItem('user', JSON.stringify(user));
+    localStorage.setItem('user', JSON.stringify(normalizedUser));
     
-    setUser(user);
+    setUser(normalizedUser);
     await signalRService.connect();
     
-    return user;
+    return normalizedUser;
   };
 
   const logout = async () => {
@@ -62,6 +89,7 @@ export function AuthProvider({ children }) {
     setUser(null);
   };
 
+  // Role checks - now these will work correctly
   const isAdmin = user?.role === 'Admin';
   const isLibrarian = user?.role === 'Librarian' || user?.role === 'Admin';
 
@@ -82,7 +110,6 @@ export function AuthProvider({ children }) {
   );
 }
 
-// Export useAuth hook separately to avoid the eslint warning
 export const useAuth = () => {
   const context = useContext(AuthContext);
   if (!context) {
