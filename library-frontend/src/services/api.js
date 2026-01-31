@@ -66,7 +66,7 @@ export const booksApi = {
   getById: (id) => api.get(`/books/${id}`),
   create: (data) => api.post('/books', data),
   update: (id, data) => api.put(`/books/${id}`, data),
-  delete: (id) => api.delete(`/books/${id}`),
+  remove: (id) => api.delete(`/books/${id}`),
 };
 
 // Loans endpoints
