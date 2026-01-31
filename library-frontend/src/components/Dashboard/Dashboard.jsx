@@ -19,17 +19,36 @@ export default function Dashboard() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        // Regular users get their own loans
+        // Always fetch user's own loans first
         const loansResponse = await loansApi.getMy();
         setMyLoans(loansResponse.data);
 
         // Librarians and Admins get all loans + stats
         if (isLibrarian || isAdmin) {
-          const allLoansResponse = await loansApi.getAll();
-          setAllLoans(allLoansResponse.data);
+          try {
+            const allLoansResponse = await loansApi.getAll();
+            console.log('📊 All Loans Response:', allLoansResponse.data);
+            
+            // DEBUG: Log first loan to see structure
+            if (allLoansResponse.data && allLoansResponse.data.length > 0) {
+              console.log('🔍 First Loan Object:', allLoansResponse.data[0]);
+              console.log('🔍 Status value:', allLoansResponse.data[0].status);
+              console.log('🔍 Status type:', typeof allLoansResponse.data[0].status);
+            }
+            
+            setAllLoans(allLoansResponse.data || []);
+          } catch (error) {
+            console.error('Failed to fetch all loans:', error);
+            setAllLoans(loansResponse.data || []);
+          }
           
-          const statsResponse = await analyticsApi.getSummary();
-          setStats(statsResponse.data);
+          try {
+            const statsResponse = await analyticsApi.getSummary();
+            console.log('📈 Stats Response:', statsResponse.data);
+            setStats(statsResponse.data);
+          } catch (error) {
+            console.error('Failed to fetch stats:', error);
+          }
         }
       } catch (error) {
         console.error('Failed to fetch dashboard data:', error);
@@ -72,8 +91,37 @@ export default function Dashboard() {
 
   // For admins/librarians, show all loans stats
   const displayLoans = (isLibrarian || isAdmin) ? allLoans : myLoans;
-  const activeLoans = displayLoans.filter(l => l.status === 'Active');
-  const overdueLoans = activeLoans.filter(l => new Date(l.dueDate) < new Date());
+  
+  // Check ALL possible status values: "Active", "active", 1, or any truthy value
+  const activeLoans = displayLoans.filter(l => {
+    const status = l.status;
+    // Log each status to see what we're getting
+    console.log('Checking loan', l.id, 'status:', status, 'type:', typeof status);
+    
+    // Handle multiple status formats:
+    // - String: "Active" or "active"
+    // - Number: 1 (enum value for Active)
+    // - If no status field, assume it's active (since it's in the list)
+    return status === 'Active' || 
+           status === 'active' || 
+           status === 1 || 
+           status === '1' ||
+           // If there's no explicit status and no returnDate, it's likely active
+           (!l.returnDate && !status);
+  });
+  
+  const overdueLoans = activeLoans.filter(l => {
+    const dueDate = new Date(l.dueDate);
+    return dueDate < new Date();
+  });
+
+  // Debug logging
+  console.log('🔍 Dashboard Debug:');
+  console.log('displayLoans count:', displayLoans.length);
+  console.log('activeLoans count:', activeLoans.length);
+  console.log('overdueLoans count:', overdueLoans.length);
+  console.log('isAdmin:', isAdmin);
+  console.log('isLibrarian:', isLibrarian);
 
   return (
     <div className="space-y-8">
@@ -217,7 +265,9 @@ export default function Dashboard() {
                     <BookOpen className="h-6 w-6 text-gray-400" />
                   </div>
                   <div className="flex-1 min-w-0">
-                    <h3 className="font-medium text-gray-100 truncate">{loan.bookTitle}</h3>
+                    <h3 className="font-medium text-gray-100 truncate">
+                      {loan.bookTitle || loan.book?.title || 'Unknown Book'}
+                    </h3>
                     <p className="text-sm text-gray-400">
                       {(isLibrarian || isAdmin) && loan.userName && (
                         <span>Borrowed by {loan.userName} • </span>
