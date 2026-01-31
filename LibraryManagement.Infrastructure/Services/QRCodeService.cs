@@ -25,9 +25,10 @@ public class QRCodeService : IQRCodeService
         return $"data:image/svg+xml;base64,{base64}";
     }
 
-    public string GenerateLoanQRCode(int loanId, int bookId, int userId)
+    // Updated: accepts the full Loan entity so we can embed ISBN + DueDate
+    public string GenerateLoanQRCode(int loanId, int bookId, int userId, string isbn, DateTime dueDate)
     {
-        var content = $"LOAN:{loanId}|BOOK:{bookId}|USER:{userId}|TIME:{DateTime.UtcNow:O}";
+        var content = $"LOAN:{loanId}|BOOK:{bookId}|USER:{userId}|ISBN:{isbn}|DUE:{dueDate:yyyy-MM-dd}|TIME:{DateTime.UtcNow:O}";
         return GenerateQRCode(content);
     }
 }
