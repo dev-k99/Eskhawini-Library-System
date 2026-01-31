@@ -70,7 +70,6 @@ public class LoansController : ControllerBase
         var userId = GetCurrentUserId();
         var userRole = User.FindFirst(ClaimTypes.Role)?.Value;
 
-        // Users can only see their own loans unless they're admin/librarian
         if (loan.UserId != userId && userRole != "Admin" && userRole != "Librarian")
             return Forbid();
 
@@ -83,8 +82,7 @@ public class LoansController : ControllerBase
         var userId = request.UserId ?? GetCurrentUserId();
         var userRole = User.FindFirst(ClaimTypes.Role)?.Value;
 
-        // Only admin/librarian can create loans for other users
-        if (request.UserId.HasValue && request.UserId != GetCurrentUserId() 
+        if (request.UserId.HasValue && request.UserId != GetCurrentUserId()
             && userRole != "Admin" && userRole != "Librarian")
             return Forbid();
 
@@ -99,7 +97,6 @@ public class LoansController : ControllerBase
         if (user == null)
             return NotFound(new { message = "User not found" });
 
-        // Create loan
         var loan = new Loan
         {
             UserId = userId,
@@ -109,22 +106,21 @@ public class LoansController : ControllerBase
             Status = LoanStatus.Active
         };
 
-        // Generate QR code
         await _loanRepository.CreateAsync(loan);
-        loan.QRCode = _qrCodeService.GenerateLoanQRCode(loan.Id, loan.BookId, loan.UserId);
+
+        // FIXED: pass isbn + dueDate into QR payload
+        loan.QRCode = _qrCodeService.GenerateLoanQRCode(
+            loan.Id, loan.BookId, loan.UserId, book.ISBN ?? "", loan.DueDate);
         await _loanRepository.UpdateAsync(loan);
 
-        // Update book availability
         book.AvailableCopies--;
         if (book.AvailableCopies == 0)
             book.Status = BookStatus.CheckedOut;
         await _bookRepository.UpdateAsync(book);
 
-        // Log analytics
         await _analyticsRepository.LogEventAsync(
             AnalyticsEventTypes.BookBorrowed, book.Id, userId);
 
-        // Load navigation properties for response
         loan.User = user;
         loan.Book = book;
 
@@ -146,16 +142,13 @@ public class LoansController : ControllerBase
         var userId = GetCurrentUserId();
         var userRole = User.FindFirst(ClaimTypes.Role)?.Value;
 
-        // Users can only return their own loans unless they're admin/librarian
         if (loan.UserId != userId && userRole != "Admin" && userRole != "Librarian")
             return Forbid();
 
-        // Update loan
         loan.ReturnDate = DateTime.UtcNow;
         loan.Status = LoanStatus.Returned;
         await _loanRepository.UpdateAsync(loan);
 
-        // Update book availability
         var book = await _bookRepository.GetByIdAsync(loan.BookId);
         if (book != null)
         {
@@ -163,10 +156,8 @@ public class LoansController : ControllerBase
             book.Status = BookStatus.Available;
             await _bookRepository.UpdateAsync(book);
 
-            // Notify about book availability
             await _notificationService.NotifyBookReturnedAsync(book.Id, book.Title);
 
-            // Check for pending reservations
             var reservations = await _reservationRepository.GetByBookIdAsync(book.Id);
             var nextReservation = reservations.FirstOrDefault();
             if (nextReservation != null)
@@ -176,7 +167,6 @@ public class LoansController : ControllerBase
             }
         }
 
-        // Track sustainability metrics if provided
         if (request?.DistanceKm > 0 && request?.WeightKg > 0)
         {
             var metric = new SustainabilityMetric
@@ -190,7 +180,6 @@ public class LoansController : ControllerBase
             await _sustainabilityRepository.CreateAsync(metric);
         }
 
-        // Log analytics
         await _analyticsRepository.LogEventAsync(
             AnalyticsEventTypes.BookReturned, loan.BookId, loan.UserId);
 
@@ -212,9 +201,12 @@ public class LoansController : ControllerBase
         if (loan.UserId != userId && userRole != "Admin" && userRole != "Librarian")
             return Forbid();
 
+        // Regenerate if missing — also uses the new signature now
         if (string.IsNullOrEmpty(loan.QRCode))
         {
-            loan.QRCode = _qrCodeService.GenerateLoanQRCode(loan.Id, loan.BookId, loan.UserId);
+            var book = await _bookRepository.GetByIdAsync(loan.BookId);
+            loan.QRCode = _qrCodeService.GenerateLoanQRCode(
+                loan.Id, loan.BookId, loan.UserId, book?.ISBN ?? "", loan.DueDate);
             await _loanRepository.UpdateAsync(loan);
         }
 
@@ -231,7 +223,7 @@ public class LoansController : ControllerBase
 
     private int GetCurrentUserId()
     {
-        var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value 
+        var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value
             ?? User.FindFirst("sub")?.Value;
         return int.Parse(userIdClaim!);
     }
