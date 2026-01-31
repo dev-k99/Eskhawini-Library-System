@@ -15,7 +15,7 @@ public interface IAuthService
 public interface IQRCodeService
 {
     string GenerateQRCode(string content);
-    string GenerateLoanQRCode(int loanId, int bookId, int userId);
+    string GenerateLoanQRCode(int loanId, int bookId, int userId, string isbn, DateTime dueDate);
 }
 
 public interface INotificationService
