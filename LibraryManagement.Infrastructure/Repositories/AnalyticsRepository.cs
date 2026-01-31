@@ -31,30 +31,55 @@ public class AnalyticsRepository : IAnalyticsRepository
 
     public async Task<List<MostBorrowedBookDto>> GetMostBorrowedBooksAsync(int count = 10)
     {
-        return await _context.Loans
+        // FIXED: Simplified query that EF Core can translate
+        var result = await _context.Loans
+            .Include(l => l.Book)
             .GroupBy(l => new { l.BookId, l.Book.Title, l.Book.Author })
-            .Select(g => new MostBorrowedBookDto(
-                g.Key.BookId,
-                g.Key.Title,
-                g.Key.Author,
-                g.Count()))
+            .Select(g => new
+            {
+                BookId = g.Key.BookId,
+                Title = g.Key.Title,
+                Author = g.Key.Author,
+                BorrowCount = g.Count()
+            })
             .OrderByDescending(x => x.BorrowCount)
             .Take(count)
             .ToListAsync();
+
+        // Map to DTO
+        return result.Select(r => new MostBorrowedBookDto(
+            r.BookId,
+            r.Title,
+            r.Author,
+            r.BorrowCount
+        )).ToList();
     }
 
     public async Task<List<UserActivityDto>> GetUserActivityAsync(int count = 10)
     {
-        return await _context.Users
-            .Select(u => new UserActivityDto(
-                u.Id,
-                u.Name,
-                u.Loans.Count,
-                u.Loans.Count(l => l.Status == LoanStatus.Active),
-                u.Loans.Max(l => (DateTime?)l.CheckoutDate)))
+        // FIXED: Simplified query
+        var result = await _context.Users
+            .Include(u => u.Loans)
+            .Select(u => new
+            {
+                UserId = u.Id,
+                UserName = u.Name,
+                TotalLoans = u.Loans.Count,
+                ActiveLoans = u.Loans.Count(l => l.Status == LoanStatus.Active),
+                LastActivity = u.Loans.Any() ? u.Loans.Max(l => l.CheckoutDate) : (DateTime?)null
+            })
             .OrderByDescending(x => x.TotalLoans)
             .Take(count)
             .ToListAsync();
+
+        // Map to DTO
+        return result.Select(r => new UserActivityDto(
+            r.UserId,
+            r.UserName,
+            r.TotalLoans,
+            r.ActiveLoans,
+            r.LastActivity
+        )).ToList();
     }
 
     public async Task<List<GenreTrendDto>> GetGenreTrendsAsync()
@@ -62,14 +87,24 @@ public class AnalyticsRepository : IAnalyticsRepository
         var totalLoans = await _context.Loans.CountAsync();
         if (totalLoans == 0) return new List<GenreTrendDto>();
 
-        return await _context.Loans
+        // FIXED: Simplified query
+        var result = await _context.Loans
+            .Include(l => l.Book)
             .GroupBy(l => l.Book.Genre)
-            .Select(g => new GenreTrendDto(
-                g.Key,
-                g.Count(),
-                Math.Round((decimal)g.Count() / totalLoans * 100, 2)))
+            .Select(g => new
+            {
+                Genre = g.Key,
+                BorrowCount = g.Count()
+            })
             .OrderByDescending(x => x.BorrowCount)
             .ToListAsync();
+
+        // Calculate percentage and map to DTO
+        return result.Select(r => new GenreTrendDto(
+            r.Genre,
+            r.BorrowCount,
+            Math.Round((decimal)r.BorrowCount / totalLoans * 100, 2)
+        )).ToList();
     }
 
     public async Task<AnalyticsSummaryDto> GetSummaryAsync()
@@ -114,11 +149,11 @@ public class SustainabilityRepository : ISustainabilityRepository
     public async Task<SustainabilityStatsDto> GetStatsAsync()
     {
         var metrics = await _context.SustainabilityMetrics.ToListAsync();
-        
+
         var totalCarbonFootprint = metrics.Sum(m => m.CarbonFootprintKg);
         var totalShipments = metrics.Count;
         var avgDistance = totalShipments > 0 ? metrics.Average(m => m.DistanceKm) : 0;
-        
+
         // Calculate digital reads saved trees (assuming 10% of total loans are digital)
         var totalLoans = await _context.Loans.CountAsync();
         var digitalReads = (int)(totalLoans * 0.1);
