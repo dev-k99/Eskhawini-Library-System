@@ -30,6 +30,10 @@ builder.Services.AddScoped<IReservationRepository, ReservationRepository>();
 builder.Services.AddScoped<IAnalyticsRepository, AnalyticsRepository>();
 builder.Services.AddScoped<ISustainabilityRepository, SustainabilityRepository>();
 
+
+// Register email service
+builder.Services.AddScoped<IEmailService, EmailService>();
+
 // Services
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IQRCodeService, QRCodeService>();
