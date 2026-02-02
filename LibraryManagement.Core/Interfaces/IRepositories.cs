@@ -32,6 +32,7 @@ public interface ILoanRepository
     Task<List<Loan>> GetOverdueLoansAsync();
     Task<Loan> CreateAsync(Loan loan);
     Task<Loan> UpdateAsync(Loan loan);
+    Task<List<Loan>> GetAllAsync();
 }
 
 public interface IReservationRepository
