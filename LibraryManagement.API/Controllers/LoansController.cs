@@ -48,7 +48,7 @@ public class LoansController : ControllerBase
     [Authorize(Roles = "Admin,Librarian")]
     public async Task<ActionResult<List<LoanDto>>> GetAllLoans()
     {
-        var loans = await _loanRepository.GetActiveLoansAsync();
+        var loans = await _loanRepository.GetAllAsync();
         return Ok(loans.Select(MapToDto));
     }
 
