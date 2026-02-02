@@ -1,6 +1,6 @@
 import { HubConnectionBuilder, LogLevel } from '@microsoft/signalr';
 
-const HUB_URL = import.meta.env.VITE_API_URL?.replace('/api', '') || 'http://localhost:5000';
+const HUB_URL = import.meta.env.VITE_API_URL?.replace('/api', '') || 'https://localhost:7090/api';
 
 class SignalRService {
   constructor() {
