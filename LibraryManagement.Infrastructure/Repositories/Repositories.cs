@@ -29,7 +29,14 @@ public class UserRepository : IUserRepository
     {
         return await _context.Users.OrderBy(u => u.Name).ToListAsync();
     }
-
+    //public async Task<List<Loan>> GetAllAsync()
+    //{
+    //    return await _context.Loans
+    //        .Include(l => l.Book)
+    //        .Include(l => l.User)
+    //        .OrderByDescending(l => l.CheckoutDate)
+    //        .ToListAsync();
+    //}
     public async Task<User> CreateAsync(User user)
     {
         _context.Users.Add(user);
@@ -155,6 +162,14 @@ public class LoanRepository : ILoanRepository
             .Include(l => l.User)
             .Include(l => l.Book)
             .FirstOrDefaultAsync(l => l.Id == id);
+    }
+    public async Task<List<Loan>> GetAllAsync()
+    {
+        return await _context.Loans
+            .Include(l => l.Book)
+            .Include(l => l.User)
+            .OrderByDescending(l => l.CheckoutDate)
+            .ToListAsync();
     }
 
     public async Task<List<Loan>> GetByUserIdAsync(int userId)
