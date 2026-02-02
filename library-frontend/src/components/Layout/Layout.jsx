@@ -15,6 +15,7 @@ import {
   X
 } from 'lucide-react';
 import { useState, useEffect } from 'react';
+import NotificationToast from '../Notifications/NotificationToast';
 
 export default function Layout({ children }) {
   const location = useLocation();
@@ -259,6 +260,9 @@ export default function Layout({ children }) {
           </div>
         </footer>
       </div>
+
+      {/* Real-time Notifications */}
+      <NotificationToast />
     </div>
   );
 }
