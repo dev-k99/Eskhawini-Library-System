@@ -1,6 +1,8 @@
 import { HubConnectionBuilder, LogLevel } from '@microsoft/signalr';
 
-const HUB_URL = import.meta.env.VITE_API_URL?.replace('/api', '') || 'https://localhost:7090/api';
+// Strip /api from the base URL to get the host root.
+// Fallback has NO /api suffix — the hub is mapped at /hubs/library, not /api/hubs/library.
+const HUB_URL = import.meta.env.VITE_API_URL?.replace('/api', '') || 'https://localhost:7090';
 
 class SignalRService {
   constructor() {
@@ -13,11 +15,10 @@ class SignalRService {
       return;
     }
 
-    const token = localStorage.getItem('token');
-    
     this.connection = new HubConnectionBuilder()
       .withUrl(`${HUB_URL}/hubs/library`, {
-        accessTokenFactory: () => token,
+        // Read token fresh each time SignalR needs it — survives token refreshes
+        accessTokenFactory: () => localStorage.getItem('token'),
       })
       .withAutomaticReconnect()
       .configureLogging(LogLevel.Warning)
