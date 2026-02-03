@@ -59,3 +59,19 @@ public interface ISustainabilityRepository
     Task<SustainabilityMetric> CreateAsync(SustainabilityMetric metric);
     Task<SustainabilityStatsDto> GetStatsAsync();
 }
+
+public interface INotificationService
+{
+    // Called by LoansController.ReturnLoan() after a book is returned
+    Task NotifyBookReturnedAsync(int bookId, string bookTitle);
+
+    // Called by LoansController.ReturnLoan() when a pending reservation exists for the returned book
+    Task NotifyReservationReadyAsync(int userId, int bookId, string bookTitle);
+
+    // Called by NotificationBackgroundService when a loan is 3 days from due
+    Task NotifyLoanDueSoonAsync(int userId, int loanId, string bookTitle, DateTime dueDate);
+
+    // Called when a book transitions to Available (not currently invoked anywhere,
+    // but NotificationService implements it — keep for future use)
+    Task NotifyBookAvailableAsync(int bookId, string bookTitle);
+}
