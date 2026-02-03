@@ -126,7 +126,7 @@ public class LibraryDbContext : DbContext
             new User
             {
                 Id = 2,
-                Name = "Jane Librarian",
+                Name = "Sizwe Librarian",
                 Email = "librarian@library.com",
                 PasswordHash = BCrypt.Net.BCrypt.HashPassword("Lib123!"),
                 Role = UserRole.Librarian,
@@ -135,7 +135,7 @@ public class LibraryDbContext : DbContext
             new User
             {
                 Id = 3,
-                Name = "John Patron",
+                Name = "Luyanda Patron",
                 Email = "patron@library.com",
                 PasswordHash = BCrypt.Net.BCrypt.HashPassword("Patron123!"),
                 Role = UserRole.Patron,
@@ -209,7 +209,332 @@ public class LibraryDbContext : DbContext
                 AvailableCopies = 4,
                 Description = "A novel about racial injustice in the American South",
                 CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, DateTimeKind.Utc)
-            }
+            },
+            new Book
+            {
+                Id = 7,
+                Title = "The Great Gatsby",
+                Author = "F. Scott Fitzgerald",
+                ISBN = "978-0743273565",
+                Genre = "Fiction",
+                Status = BookStatus.Available,
+                TotalCopies = 4,
+                AvailableCopies = 4,
+                Description = "A novel about the American dream and tragedy in the Jazz Age",
+                CreatedAt = DateTime.UtcNow
+            },
+            new Book
+            {
+                Id = 8,
+                Title = "Pride and Prejudice",
+                Author = "Jane Austen",
+                ISBN = "978-1503290563",
+                Genre = "Fiction",
+                Status = BookStatus.Available,
+                TotalCopies = 5,
+                AvailableCopies = 5,
+                Description = "A classic romantic novel about manners and matrimonial machinations",
+                CreatedAt = DateTime.UtcNow
+            },
+        new Book
+        {
+            Id = 9,
+            Title = "Design Patterns (GoF)",
+            Author = "Erich Gamma, Richard Helm, Ralph Johnson, John Vlissides",
+            ISBN = "978-0201633610",
+            Genre = "Programming",
+            Status = BookStatus.Available,
+            TotalCopies = 2,
+            AvailableCopies = 2,
+            Description = "Elements of reusable object?oriented software",
+            CreatedAt = DateTime.UtcNow
+        },
+        new Book
+        {
+            Id = 10,
+            Title = "You Don't Know JS Yet",
+            Author = "Kyle Simpson",
+            ISBN = "978-1098115464",
+            Genre = "Programming",
+            Status = BookStatus.Available,
+            TotalCopies = 3,
+            AvailableCopies = 3,
+            Description = "A deep dive into JavaScript’s core mechanisms",
+            CreatedAt = DateTime.UtcNow
+        },
+        new Book
+        {
+            Id = 11,
+            Title = "Introduction to Algorithms (CLRS)",
+            Author = "Cormen, Leiserson, Rivest, Stein",
+            ISBN = "978-0262033848",
+            Genre = "Programming",
+            Status = BookStatus.Available,
+            TotalCopies = 3,
+            AvailableCopies = 3,
+            Description = "Comprehensive algorithms textbook",
+            CreatedAt = DateTime.UtcNow
+        },
+        new Book
+        {
+            Id = 12,
+            Title = "A Brief History of Time",
+            Author = "Stephen Hawking",
+            ISBN = "978-0553380163",
+            Genre = "Science",
+            Status = BookStatus.Available,
+            TotalCopies = 4,
+            AvailableCopies = 4,
+            Description = "Exploration of the universe’s origins and structure",
+            CreatedAt = DateTime.UtcNow
+        },
+        new Book
+        {
+            Id = 13,
+            Title = "The Selfish Gene",
+            Author = "Richard Dawkins",
+            ISBN = "978-0198788607",
+            Genre = "Science",
+            Status = BookStatus.Available,
+            TotalCopies = 4,
+            AvailableCopies = 4,
+            Description = "Evolutionary biology from a gene?centric view",
+            CreatedAt = DateTime.UtcNow
+        },
+        new Book
+        {
+            Id = 14,
+            Title = "Sapiens: A Brief History of Humankind",
+            Author = "Yuval Noah Harari",
+            ISBN = "978-0062316097",
+            Genre = "Science",
+            Status = BookStatus.Available,
+            TotalCopies = 4,
+            AvailableCopies = 4,
+            Description = "Big history of human species",
+            CreatedAt = DateTime.UtcNow
+        },
+        new Book
+        {
+            Id = 15,
+            Title = "The Structure of Scientific Revolutions",
+            Author = "Thomas S. Kuhn",
+            ISBN = "978-0226458120",
+            Genre = "Science",
+            Status = BookStatus.Available,
+            TotalCopies = 3,
+            AvailableCopies = 3,
+            Description = "Foundations of paradigm shifts in science",
+            CreatedAt = DateTime.UtcNow
+        },
+        new Book
+        {
+            Id = 16,
+            Title = "The Immortal Life of Henrietta Lacks",
+            Author = "Rebecca Skloot",
+            ISBN = "978-1400052189",
+            Genre = "Science",
+            Status = BookStatus.Available,
+            TotalCopies = 4,
+            AvailableCopies = 4,
+            Description = "Story of Henrietta Lacks and HeLa cells",
+            CreatedAt = DateTime.UtcNow
+        },
+        new Book
+        {
+            Id = 17,
+            Title = "Guns, Germs, and Steel",
+            Author = "Jared Diamond",
+            ISBN = "978-0393354324",
+            Genre = "History",
+            Status = BookStatus.Available,
+            TotalCopies = 4,
+            AvailableCopies = 4,
+            Description = "Analysis of factors shaping civilizations",
+            CreatedAt = DateTime.UtcNow
+        },
+        new Book
+        {
+            Id = 18,
+            Title = "The Art of War",
+            Author = "Sun Tzu",
+            ISBN = "978-1590302255",
+            Genre = "History",
+            Status = BookStatus.Available,
+            TotalCopies = 3,
+            AvailableCopies = 3,
+            Description = "Ancient military strategy classic",
+            CreatedAt = DateTime.UtcNow
+        },
+        new Book
+        {
+            Id = 19,
+            Title = "The Diary of Anne Frank",
+            Author = "Anne Frank",
+            ISBN = "978-0553296983",
+            Genre = "History",
+            Status = BookStatus.Available,
+            TotalCopies = 5,
+            AvailableCopies = 5,
+            Description = "Wartime diary of a Jewish girl",
+            CreatedAt = DateTime.UtcNow
+        },
+        new Book
+        {
+            Id = 20,
+            Title = "Decline of the Roman Empire",
+            Author = "Edward Gibbon",
+            ISBN = "978-0140442106",
+            Genre = "History",
+            Status = BookStatus.Available,
+            TotalCopies = 3,
+            AvailableCopies = 3,
+            Description = "Classic history of Rome’s fall",
+            CreatedAt = DateTime.UtcNow
+        },
+        new Book
+        {
+            Id = 21,
+            Title = "The Second World War",
+            Author = "Antony Beevor",
+            ISBN = "978-0241987091",
+            Genre = "History",
+            Status = BookStatus.Available,
+            TotalCopies = 4,
+            AvailableCopies = 4,
+            Description = "Comprehensive WWII history",
+            CreatedAt = DateTime.UtcNow
+        },
+        new Book
+        {
+            Id = 22,
+            Title = "Steve Jobs",
+            Author = "Walter Isaacson",
+            ISBN = "978-1451648539",
+            Genre = "Biography",
+            Status = BookStatus.Available,
+            TotalCopies = 3,
+            AvailableCopies = 3,
+            Description = "Biography of Apple co?founder",
+            CreatedAt = DateTime.UtcNow
+        },
+        new Book
+        {
+            Id = 23,
+            Title = "Long Walk to Freedom",
+            Author = "Nelson Mandela",
+            ISBN = "978-0316548182",
+            Genre = "Biography",
+            Status = BookStatus.Available,
+            TotalCopies = 4,
+            AvailableCopies = 4,
+            Description = "Autobiography of Nelson Mandela",
+            CreatedAt = DateTime.UtcNow
+        },
+        new Book
+        {
+            Id = 24,
+            Title = "The Diary of Samuel Pepys",
+            Author = "Samuel Pepys",
+            ISBN = "978-0141440644",
+            Genre = "Biography",
+            Status = BookStatus.Available,
+            TotalCopies = 3,
+            AvailableCopies = 3,
+            Description = "17th?century English diary",
+            CreatedAt = DateTime.UtcNow
+        },
+        new Book
+        {
+            Id = 25,
+            Title = "Einstein: His Life and Universe",
+            Author = "Walter Isaacson",
+            ISBN = "978-0743264747",
+            Genre = "Biography",
+            Status = BookStatus.Available,
+            TotalCopies = 3,
+            AvailableCopies = 3,
+            Description = "Life of Albert Einstein",
+            CreatedAt = DateTime.UtcNow
+        },
+        new Book
+        {
+            Id = 26,
+            Title = "Becoming",
+            Author = "Michelle Obama",
+            ISBN = "978-1524763138",
+            Genre = "Biography",
+            Status = BookStatus.Available,
+            TotalCopies = 5,
+            AvailableCopies = 5,
+            Description = "Memoir of Michelle Obama",
+            CreatedAt = DateTime.UtcNow
+        },
+        new Book
+        {
+            Id = 27,
+            Title = "The Murder of Roger Ackroyd",
+            Author = "Agatha Christie",
+            ISBN = "978-0007119318",
+            Genre = "Mystery",
+            Status = BookStatus.Available,
+            TotalCopies = 4,
+            AvailableCopies = 4,
+            Description = "Hercule Poirot mystery",
+            CreatedAt = DateTime.UtcNow
+        },
+        new Book
+        {
+            Id = 28,
+            Title = "The Girl with the Dragon Tattoo",
+            Author = "Stieg Larsson",
+            ISBN = "978-0307454546",
+            Genre = "Mystery",
+            Status = BookStatus.Available,
+            TotalCopies = 4,
+            AvailableCopies = 4,
+            Description = "Thriller novel",
+            CreatedAt = DateTime.UtcNow
+        },
+        new Book
+        {
+            Id = 29,
+            Title = "Gone Girl",
+            Author = "Gillian Flynn",
+            ISBN = "978-0307588371",
+            Genre = "Mystery",
+            Status = BookStatus.Available,
+            TotalCopies = 4,
+            AvailableCopies = 4,
+            Description = "Psychological thriller",
+            CreatedAt = DateTime.UtcNow
+        },
+        new Book
+        {
+            Id = 30,
+            Title = "The Da Vinci Code",
+            Author = "Dan Brown",
+            ISBN = "978-0307474278",
+            Genre = "Mystery",
+            Status = BookStatus.Available,
+            TotalCopies = 5,
+            AvailableCopies = 5,
+            Description = "Conspiracy thriller",
+            CreatedAt = DateTime.UtcNow
+        },
+        new Book
+        {
+            Id = 31,
+            Title = "And Then There Were None",
+            Author = "Agatha Christie",
+            ISBN = "978-0062073488",
+            Genre = "Mystery",
+            Status = BookStatus.Available,
+            TotalCopies = 5,
+            AvailableCopies = 5,
+            Description = "Classic locked?room mystery",
+            CreatedAt = DateTime.UtcNow
+        }
         );
     }
 }
