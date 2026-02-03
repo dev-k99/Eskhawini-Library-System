@@ -8,6 +8,14 @@ import {
   ArrowRight, Bell, Loader2, AlertCircle
 } from 'lucide-react';
 
+// Backend sends LoanStatus as an integer enum: 0 = Active, 1 = Returned, 2 = Overdue.
+// Normalise to lowercase strings on arrival so every filter below just compares strings.
+const STATUS_MAP = { 0: 'active', 1: 'returned', 2: 'overdue' };
+const normaliseStatus = (raw) =>
+  typeof raw === 'number' ? (STATUS_MAP[raw] ?? 'active') : String(raw).toLowerCase();
+
+const normLoans = (loans) => (loans || []).map(l => ({ ...l, status: normaliseStatus(l.status) }));
+
 export default function Dashboard() {
   const { user, isLibrarian, isAdmin } = useAuth();
   const [myLoans, setMyLoans] = useState([]);
@@ -19,32 +27,20 @@ export default function Dashboard() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        // Always fetch user's own loans first
         const loansResponse = await loansApi.getMy();
-        setMyLoans(loansResponse.data);
+        setMyLoans(normLoans(loansResponse.data));
 
-        // Librarians and Admins get all loans + stats
         if (isLibrarian || isAdmin) {
           try {
             const allLoansResponse = await loansApi.getAll();
-            console.log('📊 All Loans Response:', allLoansResponse.data);
-            
-            // DEBUG: Log first loan to see structure
-            if (allLoansResponse.data && allLoansResponse.data.length > 0) {
-              console.log('🔍 First Loan Object:', allLoansResponse.data[0]);
-              console.log('🔍 Status value:', allLoansResponse.data[0].status);
-              console.log('🔍 Status type:', typeof allLoansResponse.data[0].status);
-            }
-            
-            setAllLoans(allLoansResponse.data || []);
+            setAllLoans(normLoans(allLoansResponse.data));
           } catch (error) {
             console.error('Failed to fetch all loans:', error);
-            setAllLoans(loansResponse.data || []);
+            setAllLoans(normLoans(loansResponse.data));
           }
-          
+
           try {
             const statsResponse = await analyticsApi.getSummary();
-            console.log('📈 Stats Response:', statsResponse.data);
             setStats(statsResponse.data);
           } catch (error) {
             console.error('Failed to fetch stats:', error);
@@ -89,39 +85,12 @@ export default function Dashboard() {
     );
   }
 
-  // For admins/librarians, show all loans stats
+  // Admins/librarians see the full set; patrons see only their own
   const displayLoans = (isLibrarian || isAdmin) ? allLoans : myLoans;
-  
-  // Check ALL possible status values: "Active", "active", 1, or any truthy value
-  const activeLoans = displayLoans.filter(l => {
-    const status = l.status;
-    // Log each status to see what we're getting
-    console.log('Checking loan', l.id, 'status:', status, 'type:', typeof status);
-    
-    // Handle multiple status formats:
-    // - String: "Active" or "active"
-    // - Number: 1 (enum value for Active)
-    // - If no status field, assume it's active (since it's in the list)
-    return status === 'Active' || 
-           status === 'active' || 
-           status === 1 || 
-           status === '1' ||
-           // If there's no explicit status and no returnDate, it's likely active
-           (!l.returnDate && !status);
-  });
-  
-  const overdueLoans = activeLoans.filter(l => {
-    const dueDate = new Date(l.dueDate);
-    return dueDate < new Date();
-  });
 
-  // Debug logging
-  console.log('🔍 Dashboard Debug:');
-  console.log('displayLoans count:', displayLoans.length);
-  console.log('activeLoans count:', activeLoans.length);
-  console.log('overdueLoans count:', overdueLoans.length);
-  console.log('isAdmin:', isAdmin);
-  console.log('isLibrarian:', isLibrarian);
+  // Statuses are already normalised to lowercase strings — single clean comparison
+  const activeLoans  = displayLoans.filter(l => l.status === 'active');
+  const overdueLoans = activeLoans.filter(l => new Date(l.dueDate) < new Date());
 
   return (
     <div className="space-y-8">
