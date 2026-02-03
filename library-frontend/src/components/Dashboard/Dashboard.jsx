@@ -23,6 +23,13 @@ export default function Dashboard() {
   const [stats, setStats] = useState(null);
   const [loading, setLoading] = useState(true);
   const [notifications, setNotifications] = useState([]);
+  const [showWelcome, setShowWelcome] = useState(true);
+
+  // Auto-hide welcome banner after 5 seconds
+  useEffect(() => {
+    const timer = setTimeout(() => setShowWelcome(false), 5000);
+    return () => clearTimeout(timer);
+  }, []);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -55,7 +62,6 @@ export default function Dashboard() {
 
     fetchData();
 
-    // Set up real-time notifications
     signalRService.on('BookAvailable', (data) => {
       setNotifications(prev => [...prev, { type: 'success', message: data.message }]);
     });
@@ -85,25 +91,31 @@ export default function Dashboard() {
     );
   }
 
-  // Admins/librarians see the full set; patrons see only their own
   const displayLoans = (isLibrarian || isAdmin) ? allLoans : myLoans;
-
-  // Statuses are already normalised to lowercase strings — single clean comparison
   const activeLoans  = displayLoans.filter(l => l.status === 'active');
   const overdueLoans = activeLoans.filter(l => new Date(l.dueDate) < new Date());
 
   return (
     <div className="space-y-8">
-      {/* Welcome Section */}
-      <div className="card p-8 bg-gradient-to-br from-primary-600/20 to-accent-600/20">
-        <h1 className="text-3xl font-bold text-gray-100">
-          Welcome back, {user?.name?.split(' ')[0]}! 👋
-        </h1>
-        <p className="text-gray-400 mt-2">
-          {isAdmin ? 'Admin dashboard - Full system overview' : 
-           isLibrarian ? 'Librarian dashboard - Manage library operations' :
-           'Your library dashboard is ready with the latest updates.'}
-        </p>
+      {/* Welcome Section — fades out after 5 seconds, then collapses away */}
+      <div
+        className="overflow-hidden transition-all duration-700 ease-in-out"
+        style={{
+          maxHeight: showWelcome ? '200px' : '0px',
+          opacity: showWelcome ? 1 : 0,
+          marginBottom: showWelcome ? undefined : '0px',
+        }}
+      >
+        <div className="card p-8 bg-gradient-to-br from-primary-600/20 to-accent-600/20">
+          <h1 className="text-3xl font-bold text-gray-100">
+            Welcome back, {user?.name?.split(' ')[0]}! 👋
+          </h1>
+          <p className="text-gray-400 mt-2">
+            {isAdmin ? 'Admin dashboard - Full system overview' : 
+             isLibrarian ? 'Librarian dashboard - Manage library operations' :
+             'Your library dashboard is ready with the latest updates.'}
+          </p>
+        </div>
       </div>
 
       {/* Notifications */}
