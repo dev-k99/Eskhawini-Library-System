@@ -34,6 +34,7 @@ builder.Services.AddScoped<ISustainabilityRepository, SustainabilityRepository>(
 // Register email service
 builder.Services.AddScoped<IEmailService, EmailService>();
 
+builder.Services.AddHostedService<NotificationBackgroundService>();
 // Services
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IQRCodeService, QRCodeService>();
