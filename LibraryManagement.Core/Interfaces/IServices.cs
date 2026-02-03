@@ -18,10 +18,10 @@ public interface IQRCodeService
     string GenerateLoanQRCode(int loanId, int bookId, int userId, string isbn, DateTime dueDate);
 }
 
-public interface INotificationService
-{
-    Task NotifyBookAvailableAsync(int bookId, string bookTitle);
-    Task NotifyLoanDueSoonAsync(int userId, int loanId, string bookTitle, DateTime dueDate);
-    Task NotifyReservationReadyAsync(int userId, int bookId, string bookTitle);
-    Task NotifyBookReturnedAsync(int bookId, string bookTitle);
-}
+//public interface INotificationService
+//{
+//    Task NotifyBookAvailableAsync(int bookId, string bookTitle);
+//    Task NotifyLoanDueSoonAsync(int userId, int loanId, string bookTitle, DateTime dueDate);
+//    Task NotifyReservationReadyAsync(int userId, int bookId, string bookTitle);
+//    Task NotifyBookReturnedAsync(int bookId, string bookTitle);
+//}
