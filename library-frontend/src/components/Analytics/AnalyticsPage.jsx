@@ -54,8 +54,8 @@ export default function AnalyticsPage() {
     <div className="space-y-6">
       {/* Header */}
       <div>
-        <h1 className="text-3xl font-bold text-gray-100">Analytics Dashboard</h1>
-        <p className="text-gray-400 mt-1">Library usage insights and trends</p>
+        <h1 className="text-2xl font-bold text-black">Analytics Dashboard</h1>
+        <p className="text-gray-700">Library usage insights and trends</p>
       </div>
 
       {/* Stats Cards */}
@@ -63,8 +63,8 @@ export default function AnalyticsPage() {
         <div className="card p-5">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm text-gray-400">Total Books</p>
-              <p className="text-3xl font-bold text-gray-100 mt-1">{summary?.totalBooks || 0}</p>
+              <p className="text-sm text-black-700">Total Books</p>
+              <p className="text-3xl font-bold text-black-100 mt-1">{summary?.totalBooks || 0}</p>
             </div>
             <div className="p-3 bg-primary-500/20 rounded-xl">
               <BookOpen className="h-6 w-6 text-primary-400" />
@@ -75,8 +75,8 @@ export default function AnalyticsPage() {
         <div className="card p-5">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm text-gray-400">Total Users</p>
-              <p className="text-3xl font-bold text-gray-100 mt-1">{summary?.totalUsers || 0}</p>
+              <p className="text-sm text-black-700">Total Users</p>
+              <p className="text-3xl font-bold text-black-100 mt-1">{summary?.totalUsers || 0}</p>
             </div>
             <div className="p-3 bg-accent-500/20 rounded-xl">
               <Users className="h-6 w-6 text-accent-400" />
@@ -87,8 +87,8 @@ export default function AnalyticsPage() {
         <div className="card p-5">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm text-gray-400">Active Loans</p>
-              <p className="text-3xl font-bold text-gray-100 mt-1">{summary?.activeLoans || 0}</p>
+              <p className="text-sm text-black-700">Active Loans</p>
+              <p className="text-3xl font-bold text-black-100 mt-1">{summary?.activeLoans || 0}</p>
             </div>
             <div className="p-3 bg-green-500/20 rounded-xl">
               <Clock className="h-6 w-6 text-green-400" />
@@ -99,8 +99,8 @@ export default function AnalyticsPage() {
         <div className="card p-5">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm text-gray-400">This Month</p>
-              <p className="text-3xl font-bold text-gray-100 mt-1">{summary?.totalLoansThisMonth || 0}</p>
+              <p className="text-sm text-black-700">This Month</p>
+              <p className="text-3xl font-bold text-black-100 mt-1">{summary?.totalLoansThisMonth || 0}</p>
             </div>
             <div className="p-3 bg-yellow-500/20 rounded-xl">
               <TrendingUp className="h-6 w-6 text-yellow-400" />
@@ -113,7 +113,7 @@ export default function AnalyticsPage() {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Most Borrowed Books */}
         <div className="card p-6">
-          <h3 className="text-lg font-semibold text-gray-100 mb-4">Most Borrowed Books</h3>
+          <h3 className="text-lg font-semibold text-black-100 mb-4">Most Borrowed Books</h3>
           {summary?.topBooks?.length > 0 ? (
             <ResponsiveContainer width="100%" height={300}>
               <BarChart data={summary.topBooks} layout="vertical">
@@ -145,7 +145,7 @@ export default function AnalyticsPage() {
 
         {/* Genre Distribution */}
         <div className="card p-6">
-          <h3 className="text-lg font-semibold text-gray-100 mb-4">Genre Distribution</h3>
+          <h3 className="text-lg font-semibold text-black-100 mb-4">Genre Distribution</h3>
           {summary?.genreTrends?.length > 0 ? (
             <ResponsiveContainer width="100%" height={300}>
               <PieChart>
@@ -185,24 +185,24 @@ export default function AnalyticsPage() {
       {/* Top Books Table */}
       <div className="card overflow-hidden">
         <div className="p-5 border-b border-gray-700/50">
-          <h3 className="text-lg font-semibold text-gray-100">Top Borrowed Books</h3>
+          <h3 className="text-lg font-semibold text-black-100">Top Borrowed Books</h3>
         </div>
         <div className="overflow-x-auto">
           <table className="w-full">
             <thead>
               <tr className="bg-gray-700/30">
-                <th className="text-left p-4 text-sm font-medium text-gray-400">#</th>
-                <th className="text-left p-4 text-sm font-medium text-gray-400">Title</th>
-                <th className="text-left p-4 text-sm font-medium text-gray-400">Author</th>
-                <th className="text-right p-4 text-sm font-medium text-gray-400">Borrows</th>
+                <th className="text-left p-4 text-sm font-medium text-black-400">#</th>
+                <th className="text-left p-4 text-sm font-medium text-black-400">Title</th>
+                <th className="text-left p-4 text-sm font-medium text-black-400">Author</th>
+                <th className="text-right p-4 text-sm font-medium text-black-400">Borrows</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-700/50">
               {summary?.topBooks?.map((book, index) => (
                 <tr key={book.bookId} className="hover:bg-gray-700/20">
-                  <td className="p-4 text-gray-400">{index + 1}</td>
-                  <td className="p-4 text-gray-100 font-medium">{book.title}</td>
-                  <td className="p-4 text-gray-400">{book.author}</td>
+                  <td className="p-4 text-black-400">{index + 1}</td>
+                  <td className="p-4 text-black-100 font-medium">{book.title}</td>
+                  <td className="p-4 text-black-400">{book.author}</td>
                   <td className="p-4 text-right">
                     <span className="px-3 py-1 bg-primary-500/20 text-primary-400 rounded-lg">
                       {book.borrowCount}
@@ -212,7 +212,7 @@ export default function AnalyticsPage() {
               ))}
               {(!summary?.topBooks || summary.topBooks.length === 0) && (
                 <tr>
-                  <td colSpan={4} className="p-8 text-center text-gray-500">
+                  <td colSpan={4} className="p-8 text-center text-gray-700">
                     No borrowing data available
                   </td>
                 </tr>
