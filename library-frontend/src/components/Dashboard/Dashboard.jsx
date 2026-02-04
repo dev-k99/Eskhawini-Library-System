@@ -106,11 +106,11 @@ export default function Dashboard() {
           marginBottom: showWelcome ? undefined : '0px',
         }}
       >
-        <div className="card p-8 bg-gradient-to-br from-primary-600/20 to-accent-600/20">
-          <h1 className="text-3xl font-bold text-gray-100">
+        <div className="bg-white border border-blue-200 rounded-xl p-8 shadow-sm">
+          <h1 className="text-3xl font-bold text-gray-900">
             Welcome back, {user?.name?.split(' ')[0]}! 👋
           </h1>
-          <p className="text-gray-400 mt-2">
+          <p className="text-gray-600 mt-2 text-lg">
             {isAdmin ? 'Admin dashboard - Full system overview' : 
              isLibrarian ? 'Librarian dashboard - Manage library operations' :
              'Your library dashboard is ready with the latest updates.'}
@@ -124,17 +124,17 @@ export default function Dashboard() {
           {notifications.map((notif, index) => (
             <div 
               key={index}
-              className={`card p-4 flex items-center gap-3 animate-slide-up ${
-                notif.type === 'warning' ? 'border-yellow-500/30' : 'border-green-500/30'
+              className={`bg-white border rounded-xl p-4 flex items-center gap-3 animate-slide-up shadow-sm ${
+                notif.type === 'warning' ? 'border-yellow-300' : 'border-emerald-300'
               }`}
             >
               <Bell className={`h-5 w-5 ${
-                notif.type === 'warning' ? 'text-yellow-400' : 'text-green-400'
-              }`} />
-              <span className="text-gray-300">{notif.message}</span>
+                notif.type === 'warning' ? 'text-yellow-600' : 'text-emerald-600'
+              }`} strokeWidth={2} />
+              <span className="text-gray-700 flex-1">{notif.message}</span>
               <button 
                 onClick={() => setNotifications(prev => prev.filter((_, i) => i !== index))}
-                className="ml-auto text-gray-500 hover:text-gray-300"
+                className="text-gray-400 hover:text-gray-600"
               >
                 ×
               </button>
@@ -145,64 +145,64 @@ export default function Dashboard() {
 
       {/* Stats Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-        <div className="card p-5">
+        <div className="bg-white rounded-xl border border-gray-200 p-6 shadow-sm hover:shadow-md transition-shadow">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm text-gray-400">
+              <p className="text-sm text-gray-600 font-medium">
                 {(isLibrarian || isAdmin) ? 'Total Active Loans' : 'Active Loans'}
               </p>
-              <p className="text-2xl font-bold text-gray-100 mt-1">{activeLoans.length}</p>
+              <p className="text-3xl font-bold text-gray-900 mt-2">{activeLoans.length}</p>
             </div>
-            <div className="p-3 bg-primary-500/20 rounded-xl">
-              <BookOpen className="h-6 w-6 text-primary-400" />
+            <div className="p-3 bg-blue-100 rounded-lg">
+              <BookOpen className="h-6 w-6 text-blue-600" strokeWidth={2} />
             </div>
           </div>
         </div>
 
-        <div className="card p-5">
+        <div className="bg-white rounded-xl border border-gray-200 p-6 shadow-sm hover:shadow-md transition-shadow">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm text-gray-400">
+              <p className="text-sm text-gray-600 font-medium">
                 {(isLibrarian || isAdmin) ? 'Total Overdue' : 'Overdue'}
               </p>
-              <p className={`text-2xl font-bold mt-1 ${
-                overdueLoans.length > 0 ? 'text-red-400' : 'text-gray-100'
+              <p className={`text-3xl font-bold mt-2 ${
+                overdueLoans.length > 0 ? 'text-red-600' : 'text-gray-900'
               }`}>
                 {overdueLoans.length}
               </p>
             </div>
-            <div className={`p-3 rounded-xl ${
-              overdueLoans.length > 0 ? 'bg-red-500/20' : 'bg-gray-700/50'
+            <div className={`p-3 rounded-lg ${
+              overdueLoans.length > 0 ? 'bg-red-100' : 'bg-gray-100'
             }`}>
               <AlertCircle className={`h-6 w-6 ${
-                overdueLoans.length > 0 ? 'text-red-400' : 'text-gray-400'
-              }`} />
+                overdueLoans.length > 0 ? 'text-red-600' : 'text-gray-400'
+              }`} strokeWidth={2} />
             </div>
           </div>
         </div>
 
         {(isLibrarian || isAdmin) && stats && (
           <>
-            <div className="card p-5">
+            <div className="bg-white rounded-xl border border-gray-200 p-6 shadow-sm hover:shadow-md transition-shadow">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-gray-400">Total Books</p>
-                  <p className="text-2xl font-bold text-gray-100 mt-1">{stats.totalBooks}</p>
+                  <p className="text-sm text-gray-600 font-medium">Total Books</p>
+                  <p className="text-3xl font-bold text-gray-900 mt-2">{stats.totalBooks}</p>
                 </div>
-                <div className="p-3 bg-accent-500/20 rounded-xl">
-                  <TrendingUp className="h-6 w-6 text-accent-400" />
+                <div className="p-3 bg-purple-100 rounded-lg">
+                  <TrendingUp className="h-6 w-6 text-purple-600" strokeWidth={2} />
                 </div>
               </div>
             </div>
 
-            <div className="card p-5">
+            <div className="bg-white rounded-xl border border-gray-200 p-6 shadow-sm hover:shadow-md transition-shadow">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-gray-400">Total Users</p>
-                  <p className="text-2xl font-bold text-gray-100 mt-1">{stats.totalUsers}</p>
+                  <p className="text-sm text-gray-600 font-medium">Total Users</p>
+                  <p className="text-3xl font-bold text-gray-900 mt-2">{stats.totalUsers}</p>
                 </div>
-                <div className="p-3 bg-green-500/20 rounded-xl">
-                  <Users className="h-6 w-6 text-green-400" />
+                <div className="p-3 bg-emerald-100 rounded-lg">
+                  <Users className="h-6 w-6 text-emerald-600" strokeWidth={2} />
                 </div>
               </div>
             </div>
@@ -211,57 +211,57 @@ export default function Dashboard() {
       </div>
 
       {/* Active Loans */}
-      <div className="card">
-        <div className="p-5 border-b border-gray-700/50 flex items-center justify-between">
-          <h2 className="text-xl font-semibold text-gray-100">
+      <div className="bg-white rounded-xl border border-gray-200 shadow-sm">
+        <div className="p-6 border-b border-gray-200 flex items-center justify-between">
+          <h2 className="text-xl font-bold text-gray-900">
             {(isLibrarian || isAdmin) ? 'Recent Active Loans' : 'Your Active Loans'}
           </h2>
-          <Link to="/loans" className="text-primary-400 hover:text-primary-300 flex items-center gap-1">
+          <Link to="/loans" className="text-blue-600 hover:text-blue-700 flex items-center gap-1 font-semibold">
             View All <ArrowRight className="h-4 w-4" />
           </Link>
         </div>
         
         {activeLoans.length === 0 ? (
-          <div className="p-8 text-center">
-            <BookOpen className="h-12 w-12 mx-auto text-gray-600 mb-3" />
-            <p className="text-gray-400">
+          <div className="p-12 text-center">
+            <BookOpen className="h-12 w-12 mx-auto text-gray-300 mb-3" />
+            <p className="text-gray-600">
               {(isLibrarian || isAdmin) ? 'No active loans in the system' : 'No active loans'}
             </p>
             {!isLibrarian && !isAdmin && (
-              <Link to="/books" className="btn-primary inline-flex items-center gap-2 mt-4">
+              <Link to="/books" className="inline-flex items-center gap-2 mt-4 px-6 py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg transition-colors">
                 Browse Catalog <ArrowRight className="h-4 w-4" />
               </Link>
             )}
           </div>
         ) : (
-          <div className="divide-y divide-gray-700/50">
+          <div className="divide-y divide-gray-200">
             {activeLoans.slice(0, 5).map((loan) => {
               const dueDate = new Date(loan.dueDate);
               const isOverdue = dueDate < new Date();
               const daysLeft = Math.ceil((dueDate - new Date()) / (1000 * 60 * 60 * 24));
 
               return (
-                <div key={loan.id} className="p-5 flex items-center gap-4 hover:bg-gray-700/20">
-                  <div className="p-3 bg-gray-700/50 rounded-xl">
-                    <BookOpen className="h-6 w-6 text-gray-400" />
+                <div key={loan.id} className="p-6 flex items-center gap-4 hover:bg-gray-50 transition-colors">
+                  <div className="p-3 bg-gray-100 rounded-lg">
+                    <BookOpen className="h-6 w-6 text-gray-600" strokeWidth={2} />
                   </div>
                   <div className="flex-1 min-w-0">
-                    <h3 className="font-medium text-gray-100 truncate">
+                    <h3 className="font-semibold text-gray-900 truncate">
                       {loan.bookTitle || loan.book?.title || 'Unknown Book'}
                     </h3>
-                    <p className="text-sm text-gray-400">
+                    <p className="text-sm text-gray-600">
                       {(isLibrarian || isAdmin) && loan.userName && (
                         <span>Borrowed by {loan.userName} • </span>
                       )}
                       Due: {dueDate.toLocaleDateString()}
                     </p>
                   </div>
-                  <div className={`px-3 py-1 rounded-lg text-sm whitespace-nowrap ${
+                  <div className={`px-3 py-1.5 rounded-lg text-sm font-medium whitespace-nowrap ${
                     isOverdue 
-                      ? 'bg-red-500/20 text-red-400' 
+                      ? 'bg-red-100 text-red-700' 
                       : daysLeft <= 3 
-                        ? 'bg-yellow-500/20 text-yellow-400'
-                        : 'bg-green-500/20 text-green-400'
+                        ? 'bg-yellow-100 text-yellow-700'
+                        : 'bg-emerald-100 text-emerald-700'
                   }`}>
                     {isOverdue ? 'Overdue' : `${daysLeft} days left`}
                   </div>
@@ -274,43 +274,43 @@ export default function Dashboard() {
 
       {/* Quick Actions */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <Link to="/books" className="card-hover p-6 group">
-          <BookOpen className="h-8 w-8 text-primary-400 mb-3 group-hover:scale-110 transition-transform" />
-          <h3 className="font-semibold text-gray-100">
+        <Link to="/books" className="group bg-white border border-gray-200 rounded-xl p-6 hover:border-blue-300 hover:shadow-md transition-all">
+          <BookOpen className="h-8 w-8 text-blue-600 mb-3 group-hover:scale-110 transition-transform" strokeWidth={2} />
+          <h3 className="font-bold text-gray-900 text-lg">
             {(isLibrarian || isAdmin) ? 'Manage Catalog' : 'Browse Catalog'}
           </h3>
-          <p className="text-sm text-gray-400 mt-1">
+          <p className="text-sm text-gray-600 mt-1">
             {(isLibrarian || isAdmin) ? 'Add and edit books' : 'Find your next read'}
           </p>
         </Link>
 
-        <Link to="/loans" className="card-hover p-6 group">
-          <Clock className="h-8 w-8 text-accent-400 mb-3 group-hover:scale-110 transition-transform" />
-          <h3 className="font-semibold text-gray-100">
+        <Link to="/loans" className="group bg-white border border-gray-200 rounded-xl p-6 hover:border-purple-300 hover:shadow-md transition-all">
+          <Clock className="h-8 w-8 text-purple-600 mb-3 group-hover:scale-110 transition-transform" strokeWidth={2} />
+          <h3 className="font-bold text-gray-900 text-lg">
             {(isLibrarian || isAdmin) ? 'All Loans' : 'My Loans'}
           </h3>
-          <p className="text-sm text-gray-400 mt-1">
+          <p className="text-sm text-gray-600 mt-1">
             {(isLibrarian || isAdmin) ? 'Manage all borrowings' : 'Manage your borrowings'}
           </p>
         </Link>
 
         {isAdmin ? (
-          <Link to="/users" className="card-hover p-6 group">
-            <Users className="h-8 w-8 text-green-400 mb-3 group-hover:scale-110 transition-transform" />
-            <h3 className="font-semibold text-gray-100">User Management</h3>
-            <p className="text-sm text-gray-400 mt-1">Manage users and roles</p>
+          <Link to="/users" className="group bg-white border border-gray-200 rounded-xl p-6 hover:border-emerald-300 hover:shadow-md transition-all">
+            <Users className="h-8 w-8 text-emerald-600 mb-3 group-hover:scale-110 transition-transform" strokeWidth={2} />
+            <h3 className="font-bold text-gray-900 text-lg">User Management</h3>
+            <p className="text-sm text-gray-600 mt-1">Manage users and roles</p>
           </Link>
         ) : (isLibrarian || isAdmin) ? (
-          <Link to="/analytics" className="card-hover p-6 group">
-            <TrendingUp className="h-8 w-8 text-green-400 mb-3 group-hover:scale-110 transition-transform" />
-            <h3 className="font-semibold text-gray-100">Analytics</h3>
-            <p className="text-sm text-gray-400 mt-1">View library statistics</p>
+          <Link to="/analytics" className="group bg-white border border-gray-200 rounded-xl p-6 hover:border-emerald-300 hover:shadow-md transition-all">
+            <TrendingUp className="h-8 w-8 text-emerald-600 mb-3 group-hover:scale-110 transition-transform" strokeWidth={2} />
+            <h3 className="font-bold text-gray-900 text-lg">Analytics</h3>
+            <p className="text-sm text-gray-600 mt-1">View library statistics</p>
           </Link>
         ) : (
-          <Link to="/sustainability" className="card-hover p-6 group">
-            <TrendingUp className="h-8 w-8 text-green-400 mb-3 group-hover:scale-110 transition-transform" />
-            <h3 className="font-semibold text-gray-100">Eco Impact</h3>
-            <p className="text-sm text-gray-400 mt-1">See your green footprint</p>
+          <Link to="/sustainability" className="group bg-white border border-gray-200 rounded-xl p-6 hover:border-emerald-300 hover:shadow-md transition-all">
+            <TrendingUp className="h-8 w-8 text-emerald-600 mb-3 group-hover:scale-110 transition-transform" strokeWidth={2} />
+            <h3 className="font-bold text-gray-900 text-lg">Eco Impact</h3>
+            <p className="text-sm text-gray-600 mt-1">See your green footprint</p>
           </Link>
         )}
       </div>
