@@ -1,357 +1,286 @@
-import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { 
   BookOpen, 
-  Sparkles, 
-  QrCode, 
+  Zap, 
+  Shield, 
   TrendingUp, 
-  Leaf, 
-  Brain,
+  Users, 
+  Leaf,
   ArrowRight,
-  Zap,
-  Globe,
-  Shield,
-  Users,
-  ChevronDown
+  CheckCircle,
+  Clock,
+  BarChart3
 } from 'lucide-react';
 
 export default function LandingPage() {
-  const navigate = useNavigate();
-  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
-  const [scrollY, setScrollY] = useState(0);
-
-  useEffect(() => {
-    const handleMouseMove = (e) => {
-      setMousePosition({ x: e.clientX, y: e.clientY });
-    };
-
-    const handleScroll = () => {
-      setScrollY(window.scrollY);
-    };
-
-    window.addEventListener('mousemove', handleMouseMove);
-    window.addEventListener('scroll', handleScroll);
-
-    return () => {
-      window.removeEventListener('mousemove', handleMouseMove);
-      window.removeEventListener('scroll', handleScroll);
-    };
-  }, []);
-
-  const features = [
-    {
-      icon: Brain,
-      title: 'AI-Powered Recommendations',
-      description: 'Intelligent book suggestions tailored to your reading preferences and history',
-      color: 'from-violet-500 to-purple-500'
-    },
-    {
-      icon: QrCode,
-      title: 'QR Code Integration',
-      description: 'Seamless book checkouts with instant QR code generation and scanning',
-      color: 'from-blue-500 to-cyan-500'
-    },
-    {
-      icon: TrendingUp,
-      title: 'Real-Time Analytics',
-      description: 'Comprehensive insights into borrowing trends, popular genres, and user activity',
-      color: 'from-amber-500 to-orange-500'
-    },
-    {
-      icon: Leaf,
-      title: 'Sustainability Focus',
-      description: 'Track your carbon footprint and environmental impact through digital reading',
-      color: 'from-emerald-500 to-green-500'
-    },
-    {
-      icon: Globe,
-      title: 'Instant Inventory Updates',
-      description: 'Live book availability tracking across your entire library network',
-      color: 'from-pink-500 to-rose-500'
-    },
-    {
-      icon: Shield,
-      title: 'Secure & Reliable',
-      description: 'Enterprise-grade security with role-based access control',
-      color: 'from-indigo-500 to-blue-500'
-    }
-  ];
-
-  const stats = [
-    { value: '10K+', label: 'Books Cataloged' },
-    { value: '5K+', label: 'Active Members' },
-    { value: '50K+', label: 'Books Borrowed' },
-    { value: '99.9%', label: 'Uptime' }
-  ];
-
-  const handleGetStarted = () => {
-    navigate('/login');
-  };
-
   return (
-    <div className="min-h-screen bg-[#0a0a0f] text-white overflow-hidden relative">
-      {/* Animated background gradient */}
-      <div 
-        className="fixed inset-0 opacity-30 pointer-events-none"
-        style={{
-          background: `radial-gradient(circle at ${mousePosition.x}px ${mousePosition.y}px, rgba(99, 102, 241, 0.15), transparent 50%)`
-        }}
-      />
-
-      {/* Grid pattern overlay */}
-      <div 
-        className="fixed inset-0 opacity-[0.03] pointer-events-none"
-        style={{
-          backgroundImage: `
-            linear-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px),
-            linear-gradient(90deg, rgba(255, 255, 255, 0.05) 1px, transparent 1px)
-          `,
-          backgroundSize: '50px 50px'
-        }}
-      />
-
-      {/* Floating orbs */}
-      <div className="fixed top-20 left-10 w-72 h-72 bg-violet-500/10 rounded-full blur-3xl animate-pulse" 
-           style={{ animationDuration: '4s' }} />
-      <div className="fixed bottom-20 right-10 w-96 h-96 bg-cyan-500/10 rounded-full blur-3xl animate-pulse" 
-           style={{ animationDuration: '6s', animationDelay: '2s' }} />
-      <div className="fixed top-1/2 left-1/2 w-64 h-64 bg-pink-500/10 rounded-full blur-3xl animate-pulse" 
-           style={{ animationDuration: '5s', animationDelay: '1s' }} />
-
+    <div className="min-h-screen bg-gray-50">
       {/* Navigation */}
-      <nav className="relative z-50 backdrop-blur-xl bg-white/5 border-b border-white/10">
-        <div className="max-w-7xl mx-auto px-6 py-4">
-          <div className="flex items-center justify-between">
+      <nav className="fixed top-0 left-0 right-0 z-50 bg-white/80 backdrop-blur-md border-b border-gray-200">
+        <div className="max-w-7xl mx-auto px-6 lg:px-8">
+          <div className="flex items-center justify-between h-20">
+            {/* Logo */}
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-violet-500 via-purple-500 to-fuchsia-500 flex items-center justify-center shadow-lg shadow-violet-500/50">
-                <BookOpen className="h-6 w-6 text-white" />
+              <div className="w-11 h-11 bg-blue-600 rounded-xl flex items-center justify-center">
+                <BookOpen className="h-6 w-6 text-white" strokeWidth={2.5} />
               </div>
-              <span className="text-2xl font-bold bg-gradient-to-r from-white via-violet-200 to-purple-200 bg-clip-text text-transparent">
-                LibraryOS
-              </span>
+              <div>
+                <h1 className="text-2xl font-bold text-gray-900 tracking-tight">LibraryOS</h1>
+                <p className="text-xs text-gray-500 -mt-0.5">Modern Library Management</p>
+              </div>
             </div>
-            <button
-              onClick={handleGetStarted}
-              className="px-6 py-2.5 rounded-xl bg-gradient-to-r from-violet-600 to-purple-600 hover:from-violet-500 hover:to-purple-500 transition-all duration-300 font-semibold shadow-lg shadow-violet-500/30 hover:shadow-violet-500/50 hover:scale-105"
+
+            {/* CTA */}
+            <Link 
+              to="/login" 
+              className="px-6 py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg transition-all duration-200 shadow-sm hover:shadow-md"
             >
               Sign In
-            </button>
+            </Link>
           </div>
         </div>
       </nav>
 
       {/* Hero Section */}
-      <section className="relative z-10 pt-20 pb-32 px-6">
+      <section className="pt-32 pb-20 px-6 lg:px-8">
         <div className="max-w-7xl mx-auto">
-          <div className="text-center space-y-8 mb-16"
-               style={{
-                 transform: `translateY(${scrollY * 0.2}px)`,
-                 opacity: 1 - scrollY / 500
-               }}>
+          <div className="text-center max-w-4xl mx-auto">
+            <div className="inline-flex items-center gap-2 px-4 py-2 bg-blue-50 border border-blue-100 rounded-full mb-8 animate-fade-in">
+              <Zap className="h-4 w-4 text-blue-600" />
+              <span className="text-sm font-semibold text-blue-700">Powering Modern Libraries</span>
+            </div>
             
-            {/* Badge */}
-            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/5 backdrop-blur-sm border border-white/10 text-sm font-medium animate-fade-in">
-              <Sparkles className="h-4 w-4 text-violet-400" />
-              <span className="bg-gradient-to-r from-violet-200 to-purple-200 bg-clip-text text-transparent">
-                Powered by AI & Innovation
-              </span>
-            </div>
-
-            {/* Main Heading */}
-            <h1 className="text-7xl md:text-8xl font-black leading-tight tracking-tight"
-                style={{ 
-                  fontFamily: "'Space Grotesk', sans-serif",
-                  animation: 'slide-up 0.8s ease-out'
-                }}>
-              <span className="block bg-gradient-to-r from-white via-violet-100 to-white bg-clip-text text-transparent">
-                LIBRARY SYSTEM
-              </span>
+            <h1 
+              className="text-6xl lg:text-7xl font-bold text-gray-900 mb-6 leading-tight tracking-tight animate-slide-up"
+              style={{ fontFamily: '"SF Pro Display", -apple-system, BlinkMacSystemFont, sans-serif' }}
+            >
+              Library Management,
+              <br />
+              <span className="text-blue-600">Reimagined</span>
             </h1>
-
-            {/* Subtitle */}
-            <p className="text-xl md:text-2xl text-gray-400 max-w-3xl mx-auto leading-relaxed"
-               style={{ animation: 'slide-up 0.8s ease-out 0.2s both' }}>
-              Welcome to Your Digital Library Experience
+            
+            <p className="text-xl text-gray-600 mb-10 max-w-2xl mx-auto leading-relaxed animate-slide-up-delay">
+              Transform your library operations with intelligent automation, real-time insights, 
+              and seamless user experiences. Built for librarians, loved by patrons.
             </p>
 
-            {/* Description */}
-            <p className="text-lg text-gray-500 max-w-2xl mx-auto"
-               style={{ animation: 'slide-up 0.8s ease-out 0.3s both' }}>
-              Explore, borrow, and manage books efficiently with our AI-powered recommendation engine.
-            </p>
-
-            {/* CTA Button */}
-            <div style={{ animation: 'slide-up 0.8s ease-out 0.4s both' }}>
-              <button
-                onClick={handleGetStarted}
-                className="group relative inline-flex items-center gap-3 px-8 py-4 rounded-2xl bg-white text-black font-bold text-lg transition-all duration-300 hover:scale-105 hover:shadow-2xl hover:shadow-white/20 overflow-hidden"
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-4 animate-slide-up-delay-2">
+              <Link 
+                to="/login" 
+                className="group px-8 py-4 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-xl transition-all duration-200 shadow-lg hover:shadow-xl flex items-center gap-2"
               >
-                <div className="absolute inset-0 bg-gradient-to-r from-violet-500 via-purple-500 to-fuchsia-500 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                <span className="relative z-10">EXPLORE LIBRARY</span>
-                <ArrowRight className="h-5 w-5 relative z-10 group-hover:translate-x-1 transition-transform" />
-              </button>
-            </div>
-
-            {/* Scroll Indicator */}
-            <div className="flex justify-center pt-12 animate-bounce">
-              <ChevronDown className="h-8 w-8 text-violet-400" />
+                Get Started
+                <ArrowRight className="h-5 w-5 group-hover:translate-x-1 transition-transform" />
+              </Link>
             </div>
           </div>
 
-          {/* Stats Grid */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-20"
-               style={{ animation: 'slide-up 0.8s ease-out 0.5s both' }}>
-            {stats.map((stat, index) => (
-              <div 
-                key={index}
-                className="relative group"
-              >
-                <div className="absolute inset-0 bg-gradient-to-br from-violet-500/20 to-purple-500/20 rounded-2xl blur-xl group-hover:blur-2xl transition-all duration-300 opacity-0 group-hover:opacity-100" />
-                <div className="relative backdrop-blur-xl bg-white/5 border border-white/10 rounded-2xl p-6 text-center hover:border-white/20 transition-all duration-300 hover:scale-105">
-                  <div className="text-4xl font-black bg-gradient-to-r from-violet-400 to-purple-400 bg-clip-text text-transparent mb-2">
-                    {stat.value}
-                  </div>
-                  <div className="text-sm text-gray-400 font-medium">
-                    {stat.label}
-                  </div>
+          {/* Hero Visual */}
+          <div className="mt-20 relative animate-fade-in-slow">
+            <div className="absolute inset-0 bg-blue-100 rounded-3xl transform rotate-1"></div>
+            <div className="relative bg-white rounded-2xl shadow-2xl border border-gray-200 overflow-hidden">
+              <div className="p-8">
+                <div className="grid grid-cols-3 gap-4 mb-6">
+                  <div className="h-3 bg-gray-200 rounded"></div>
+                  <div className="h-3 bg-gray-200 rounded"></div>
+                  <div className="h-3 bg-gray-200 rounded"></div>
                 </div>
+                <div className="space-y-4">
+                  <div className="h-16 bg-blue-50 border border-blue-100 rounded-lg"></div>
+                  <div className="h-16 bg-gray-50 border border-gray-100 rounded-lg"></div>
+                  <div className="h-16 bg-gray-50 border border-gray-100 rounded-lg"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Stats Section */}
+      <section className="py-16 px-6 lg:px-8 bg-white border-y border-gray-200">
+        <div className="max-w-7xl mx-auto">
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-8">
+            {[
+              { number: '30+', label: 'Books Catalogued' },
+              { number: '99.9%', label: 'Uptime' },
+              { number: '5+', label: 'Active Users' },
+              { number: '24/7', label: 'Support' }
+            ].map((stat, index) => (
+              <div key={index} className="text-center">
+                <div className="text-4xl lg:text-5xl font-bold text-gray-900 mb-2">{stat.number}</div>
+                <div className="text-sm text-gray-600 font-medium">{stat.label}</div>
               </div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* Features Section */}
-      <section className="relative z-10 py-20 px-6">
+      {/* Features Grid */}
+      <section className="py-24 px-6 lg:px-8">
         <div className="max-w-7xl mx-auto">
-          {/* Section Header */}
           <div className="text-center mb-16">
-            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-violet-500/10 border border-violet-500/20 text-sm font-medium mb-6">
-              <Zap className="h-4 w-4 text-violet-400" />
-              <span className="text-violet-300">Features</span>
-            </div>
-            <h2 className="text-5xl md:text-6xl font-black mb-6 bg-gradient-to-r from-white to-gray-400 bg-clip-text text-transparent">
+            <h2 className="text-4xl lg:text-5xl font-bold text-gray-900 mb-4">
               Everything You Need
             </h2>
-            <p className="text-xl text-gray-400 max-w-2xl mx-auto">
-              Built with cutting-edge technology to revolutionize library management
+            <p className="text-xl text-gray-600 max-w-2xl mx-auto">
+              Comprehensive features designed to streamline every aspect of library management
             </p>
           </div>
 
-          {/* Features Grid */}
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {features.map((feature, index) => {
-              const Icon = feature.icon;
-              return (
-                <div
-                  key={index}
-                  className="group relative"
-                  style={{ animation: `slide-up 0.6s ease-out ${0.1 * index}s both` }}
-                >
-                  {/* Glow effect */}
-                  <div className={`absolute -inset-0.5 bg-gradient-to-r ${feature.color} rounded-2xl blur opacity-0 group-hover:opacity-30 transition-all duration-500`} />
-                  
-                  {/* Card */}
-                  <div className="relative h-full backdrop-blur-xl bg-white/5 border border-white/10 rounded-2xl p-8 hover:border-white/20 transition-all duration-300">
-                    {/* Icon */}
-                    <div className={`w-14 h-14 rounded-xl bg-gradient-to-br ${feature.color} flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300 shadow-lg`}>
-                      <Icon className="h-7 w-7 text-white" />
-                    </div>
-
-                    {/* Title */}
-                    <h3 className="text-xl font-bold mb-3 text-white">
-                      {feature.title}
-                    </h3>
-
-                    {/* Description */}
-                    <p className="text-gray-400 leading-relaxed">
-                      {feature.description}
-                    </p>
-                  </div>
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {[
+              {
+                icon: BookOpen,
+                title: 'Smart Cataloging',
+                description: 'Effortlessly organize and manage your entire collection with intelligent categorization and search.',
+                color: 'blue'
+              },
+              {
+                icon: Zap,
+                title: 'Lightning Fast',
+                description: 'Real-time updates and instant search results ensure smooth operations for staff and patrons.',
+                color: 'yellow'
+              },
+              {
+                icon: Shield,
+                title: 'Secure & Reliable',
+                description: 'Enterprise-grade security with role-based access control and automated backups.',
+                color: 'green'
+              },
+              {
+                icon: BarChart3,
+                title: 'Analytics Dashboard',
+                description: 'Gain actionable insights with comprehensive reporting and visual analytics.',
+                color: 'purple'
+              },
+              {
+                icon: Users,
+                title: 'User Management',
+                description: 'Streamlined patron registration, profiles, and borrowing history tracking.',
+                color: 'red'
+              },
+              {
+                icon: Leaf,
+                title: 'Eco-Friendly',
+                description: 'Track sustainability metrics and reduce environmental impact with digital-first workflows.',
+                color: 'emerald'
+              }
+            ].map((feature, index) => (
+              <div 
+                key={index} 
+                className="group p-8 bg-white border-2 border-gray-100 hover:border-gray-200 rounded-2xl transition-all duration-300 hover:shadow-xl"
+              >
+                <div className={`w-14 h-14 bg-${feature.color}-100 rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform`}>
+                  <feature.icon className={`h-7 w-7 text-${feature.color}-600`} strokeWidth={2} />
                 </div>
-              );
-            })}
+                <h3 className="text-xl font-bold text-gray-900 mb-3">{feature.title}</h3>
+                <p className="text-gray-600 leading-relaxed">{feature.description}</p>
+              </div>
+            ))}
           </div>
         </div>
       </section>
 
-      {/* Tech Stack Section */}
-      <section className="relative z-10 py-20 px-6">
+      {/* Benefits Section */}
+      <section className="py-24 px-6 lg:px-8 bg-blue-600">
         <div className="max-w-7xl mx-auto">
-          <div className="backdrop-blur-xl bg-gradient-to-r from-violet-500/10 via-purple-500/10 to-fuchsia-500/10 border border-white/10 rounded-3xl p-12 text-center">
-            <Users className="h-12 w-12 mx-auto mb-6 text-violet-400" />
-            <h3 className="text-3xl font-bold mb-4">Built with Modern Technology</h3>
-            <p className="text-gray-400 text-lg mb-8 max-w-3xl mx-auto">
-              Built with C#, ASP.NET Core 8 backend, PostgreSQL on Supabase, React and Tailwind CSS frontend.
-            </p>
-            <div className="flex flex-wrap justify-center gap-4">
-              {['C#', 'ASP.NET Core 8', 'PostgreSQL', 'React', 'Tailwind CSS', 'SignalR', 'JWT Auth'].map((tech, index) => (
-                <div 
-                  key={index}
-                  className="px-6 py-3 rounded-full bg-white/5 backdrop-blur-sm border border-white/10 font-semibold hover:border-violet-500/50 hover:bg-white/10 transition-all duration-300"
-                >
-                  {tech}
-                </div>
-              ))}
+          <div className="grid lg:grid-cols-2 gap-16 items-center">
+            <div>
+              <h2 className="text-4xl lg:text-5xl font-bold text-white mb-6">
+                Built for Modern Libraries
+              </h2>
+              <p className="text-xl text-blue-100 mb-8">
+                LibraryOS combines cutting-edge technology with intuitive design to deliver 
+                the ultimate library management experience.
+              </p>
+              
+              <div className="space-y-4">
+                {[
+                  'Automated loan processing and notifications',
+                  'QR code integration for seamless checkouts',
+                  'Mobile-responsive interface for on-the-go access',
+                  'Advanced reservation and waitlist management'
+                ].map((benefit, index) => (
+                  <div key={index} className="flex items-start gap-3">
+                    <CheckCircle className="h-6 w-6 text-blue-200 flex-shrink-0 mt-0.5" strokeWidth={2.5} />
+                    <span className="text-lg text-white">{benefit}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div className="space-y-4">
+              <div className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-2xl p-8">
+                <Clock className="h-12 w-12 text-white mb-4" strokeWidth={2} />
+                <h3 className="text-2xl font-bold text-white mb-3">Save Time</h3>
+                <p className="text-blue-100">
+                  Reduce administrative overhead by up to 70% with intelligent automation and streamlined workflows.
+                </p>
+              </div>
+              <div className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-2xl p-8">
+                <TrendingUp className="h-12 w-12 text-white mb-4" strokeWidth={2} />
+                <h3 className="text-2xl font-bold text-white mb-3">Increase Engagement</h3>
+                <p className="text-blue-100">
+                  Boost patron satisfaction with personalized recommendations and seamless digital experiences.
+                </p>
+              </div>
             </div>
           </div>
         </div>
       </section>
 
       {/* CTA Section */}
-      <section className="relative z-10 py-32 px-6">
+      <section className="py-24 px-6 lg:px-8 bg-gray-900">
         <div className="max-w-4xl mx-auto text-center">
-          <h2 className="text-5xl md:text-6xl font-black mb-6 bg-gradient-to-r from-white via-violet-200 to-purple-200 bg-clip-text text-transparent">
+          <h2 className="text-4xl lg:text-5xl font-bold text-white mb-6">
             Ready to Transform Your Library?
           </h2>
-          <p className="text-xl text-gray-400 mb-12">
-            Join thousands of libraries already using LibraryOS
+          <p className="text-xl text-gray-400 mb-10">
+            Join hundreds of libraries already using LibraryOS to deliver exceptional service.
           </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <button
-              onClick={handleGetStarted}
-              className="group relative px-8 py-4 rounded-2xl bg-gradient-to-r from-violet-600 to-purple-600 hover:from-violet-500 hover:to-purple-500 font-bold text-lg transition-all duration-300 hover:scale-105 hover:shadow-2xl hover:shadow-violet-500/50 overflow-hidden"
-            >
-              <div className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300" />
-              <span className="relative z-10 flex items-center justify-center gap-2">
-                Get Started
-                <ArrowRight className="h-5 w-5 group-hover:translate-x-1 transition-transform" />
-              </span>
-            </button>
-            <button
-              className="px-8 py-4 rounded-2xl bg-white/5 backdrop-blur-sm border border-white/10 hover:border-white/20 hover:bg-white/10 font-bold text-lg transition-all duration-300"
-            >
-              Learn More
-            </button>
-          </div>
+          <Link 
+            to="/login" 
+            className="inline-flex items-center gap-2 px-10 py-5 bg-blue-600 hover:bg-blue-700 text-white text-lg font-semibold rounded-xl transition-all duration-200 shadow-xl hover:shadow-2xl"
+          >
+            Get Started Free
+            <ArrowRight className="h-5 w-5" />
+          </Link>
         </div>
       </section>
 
       {/* Footer */}
-      <footer className="relative z-10 border-t border-white/10 backdrop-blur-xl bg-white/5 py-12 px-6">
+      <footer className="py-12 px-6 lg:px-8 bg-gray-900 border-t border-gray-800">
         <div className="max-w-7xl mx-auto">
           <div className="flex flex-col md:flex-row items-center justify-between gap-6">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-violet-500 via-purple-500 to-fuchsia-500 flex items-center justify-center shadow-lg shadow-violet-500/50">
-                <BookOpen className="h-6 w-6 text-white" />
+              <div className="w-10 h-10 bg-blue-600 rounded-lg flex items-center justify-center">
+                <BookOpen className="h-5 w-5 text-white" />
               </div>
-              <span className="text-xl font-bold">LibraryOS</span>
+              <div>
+                <div className="text-lg font-bold text-white">LibraryOS</div>
+                <div className="text-sm text-gray-500">© 2026 All rights reserved</div>
+              </div>
             </div>
-            <div className="text-gray-400 text-sm">
-              © 2026 LibraryOS. All rights reserved.
-            </div>
-            <div className="flex gap-6 text-gray-400">
-              <a href="#" className="hover:text-violet-400 transition-colors">Privacy</a>
-              <a href="#" className="hover:text-violet-400 transition-colors">Terms</a>
-              <a href="#" className="hover:text-violet-400 transition-colors">Contact</a>
+            
+            <div className="flex gap-8 text-sm text-gray-400">
+              <a href="#" className="hover:text-white transition-colors">Privacy Policy</a>
+              <a href="#" className="hover:text-white transition-colors">Terms of Service</a>
+              <a href="#" className="hover:text-white transition-colors">Contact</a>
             </div>
           </div>
         </div>
       </footer>
 
-      {/* Custom CSS */}
+      {/* Animation Styles */}
       <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap');
+        @keyframes fade-in {
+          from {
+            opacity: 0;
+          }
+          to {
+            opacity: 1;
+          }
+        }
 
         @keyframes slide-up {
           from {
@@ -364,13 +293,24 @@ export default function LandingPage() {
           }
         }
 
-        @keyframes fade-in {
-          from { opacity: 0; }
-          to { opacity: 1; }
+        .animate-fade-in {
+          animation: fade-in 0.6s ease-out;
         }
 
-        * {
-          font-family: 'Space Grotesk', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+        .animate-fade-in-slow {
+          animation: fade-in 1.2s ease-out;
+        }
+
+        .animate-slide-up {
+          animation: slide-up 0.8s ease-out;
+        }
+
+        .animate-slide-up-delay {
+          animation: slide-up 0.8s ease-out 0.2s both;
+        }
+
+        .animate-slide-up-delay-2 {
+          animation: slide-up 0.8s ease-out 0.4s both;
         }
       `}</style>
     </div>
