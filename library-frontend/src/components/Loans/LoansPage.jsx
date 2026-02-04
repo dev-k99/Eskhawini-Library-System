@@ -48,19 +48,19 @@ function QRModal({ loan, onClose }) {
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
       {/* Backdrop */}
-      <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={onClose} />
+      <div className="absolute inset-0 bg-black/20 backdrop-blur-sm" onClick={onClose} />
 
       {/* Card */}
-      <div className="relative w-full max-w-sm bg-gray-800 border border-gray-700 rounded-2xl shadow-2xl">
+      <div className="relative w-full max-w-sm bg-white border border-gray-200 rounded-2xl shadow-2xl">
         {/* Header */}
-        <div className="flex items-center justify-between p-5 border-b border-gray-700">
+        <div className="flex items-center justify-between p-5 border-b border-gray-200">
           <div className="flex items-center gap-3">
-            <div className="p-2 bg-primary-500/20 rounded-xl">
-              <QrCode className="h-5 w-5 text-primary-400" />
+            <div className="p-2 bg-blue-100 rounded-xl">
+              <QrCode className="h-5 w-5 text-blue-600" />
             </div>
-            <h3 className="text-lg font-semibold text-gray-100">Loan QR Code</h3>
+            <h3 className="text-lg font-semibold text-gray-900">Loan QR Code</h3>
           </div>
-          <button onClick={onClose} className="p-1 hover:bg-gray-700 rounded-lg transition-colors">
+          <button onClick={onClose} className="p-1 hover:bg-gray-100 rounded-lg transition-colors">
             <X className="h-5 w-5 text-gray-400" />
           </button>
         </div>
@@ -68,21 +68,21 @@ function QRModal({ loan, onClose }) {
         {/* Body */}
         <div className="p-5 space-y-4">
           {/* Book title */}
-          <p className="text-gray-300 font-medium text-center">{loan.bookTitle}</p>
+          <p className="text-gray-700 font-medium text-center">{loan.bookTitle}</p>
 
           {/* QR / Spinner / Error */}
           {loading && (
             <div className="flex justify-center py-10">
-              <Loader2 className="h-10 w-10 animate-spin text-primary-500" />
+              <Loader2 className="h-10 w-10 animate-spin text-blue-600" />
             </div>
           )}
 
           {error && (
             <div className="flex flex-col items-center gap-3 py-6">
-              <div className="p-3 bg-red-500/10 rounded-full">
-                <AlertCircle className="h-8 w-8 text-red-400" />
+              <div className="p-3 bg-red-100 rounded-full">
+                <AlertCircle className="h-8 w-8 text-red-600" />
               </div>
-              <p className="text-red-400 text-sm text-center">{error}</p>
+              <p className="text-red-600 text-sm text-center">{error}</p>
               <button
                 onClick={() => { setError(null); setLoading(true); }}
                 className="btn-secondary text-sm flex items-center gap-2 mt-1"
@@ -100,41 +100,41 @@ function QRModal({ loan, onClose }) {
 
           {/* Loan details summary */}
           {!loading && !error && (
-            <div className="bg-gray-700/40 rounded-xl p-4 space-y-2 text-sm">
+            <div className="bg-gray-100 rounded-xl p-4 space-y-2 text-sm">
               <div className="flex justify-between">
                 <span className="text-gray-400">Loan ID</span>
-                <span className="text-gray-200 font-medium">#{loan.id}</span>
+                <span className="text-gray-800 font-medium">#{loan.id}</span>
               </div>
               <div className="flex justify-between">
                 <span className="text-gray-400">Book</span>
-                <span className="text-gray-200 font-medium truncate ml-4 text-right">{loan.bookTitle}</span>
+                <span className="text-gray-800 font-medium truncate ml-4 text-right">{loan.bookTitle}</span>
               </div>
               {loan.userName && (
                 <div className="flex justify-between">
                   <span className="text-gray-400">Borrower</span>
-                  <span className="text-gray-200 font-medium">{loan.userName}</span>
+                  <span className="text-gray-800 font-medium">{loan.userName}</span>
                 </div>
               )}
               <div className="flex justify-between">
                 <span className="text-gray-400">Checked out</span>
-                <span className="text-gray-200 font-medium">{new Date(loan.checkoutDate).toLocaleDateString()}</span>
+                <span className="text-gray-800 font-medium">{new Date(loan.checkoutDate).toLocaleDateString()}</span>
               </div>
               <div className="flex justify-between">
                 <span className="text-gray-400">Due date</span>
-                <span className={`font-medium ${new Date(loan.dueDate) < new Date() ? 'text-red-400' : 'text-green-400'}`}>
+                <span className={`font-medium ${new Date(loan.dueDate) < new Date() ? 'text-red-600' : 'text-emerald-600'}`}>
                   {new Date(loan.dueDate).toLocaleDateString()}
                 </span>
               </div>
             </div>
           )}
 
-          <p className="text-xs text-gray-500 text-center">
+          <p className="text-xs text-gray-700 text-center">
             Scan this code at the library kiosk for quick checkout / return
           </p>
         </div>
 
         {/* Footer */}
-        <div className="p-4 border-t border-gray-700">
+        <div className="p-4 border-t border-gray-200">
           <button onClick={onClose} className="w-full btn-secondary">Close</button>
         </div>
       </div>
@@ -201,20 +201,20 @@ export default function LoansPage() {
 
     if (loan.status === 'returned') {
       return (
-        <span className="flex items-center gap-1 px-3 py-1 bg-green-500/20 text-green-400 rounded-lg text-sm">
+        <span className="flex items-center gap-1 px-3 py-1 bg-emerald-100 text-emerald-600 rounded-lg text-sm">
           <CheckCircle className="h-4 w-4" /> Returned
         </span>
       );
     }
     if (isOverdue) {
       return (
-        <span className="flex items-center gap-1 px-3 py-1 bg-red-500/20 text-red-400 rounded-lg text-sm">
+        <span className="flex items-center gap-1 px-3 py-1 bg-red-100 text-red-600 rounded-lg text-sm">
           <AlertTriangle className="h-4 w-4" /> Overdue
         </span>
       );
     }
     return (
-      <span className="flex items-center gap-1 px-3 py-1 bg-primary-500/20 text-primary-400 rounded-lg text-sm">
+      <span className="flex items-center gap-1 px-3 py-1 bg-blue-100 text-blue-600 rounded-lg text-sm">
         <Clock className="h-4 w-4" /> Active
       </span>
     );
@@ -224,7 +224,7 @@ export default function LoansPage() {
   if (loading) {
     return (
       <div className="flex justify-center items-center py-20">
-        <Loader2 className="h-10 w-10 animate-spin text-primary-500" />
+        <Loader2 className="h-10 w-10 animate-spin text-blue-600" />
       </div>
     );
   }
@@ -234,7 +234,7 @@ export default function LoansPage() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
-          <h1 className="text-3xl font-bold text-gray-100">
+          <h1 className="text-3xl font-bold text-gray-900">
             {isLibrarian ? 'All Loans' : 'My Loans'}
           </h1>
           <p className="text-gray-400 mt-1">
@@ -255,8 +255,8 @@ export default function LoansPage() {
               onClick={() => setFilter(f)}
               className={`px-4 py-2 rounded-xl transition-all ${
                 filter === f
-                  ? 'bg-primary-500 text-white'
-                  : 'bg-gray-700/50 text-gray-300 hover:bg-gray-600/50'
+                  ? 'bg-blue-600 text-white'
+                  : 'bg-gray-50 text-gray-700 hover:bg-gray-100'
               }`}
             >
               {f.charAt(0).toUpperCase() + f.slice(1)}
@@ -268,9 +268,9 @@ export default function LoansPage() {
       {/* Loans list */}
       {filteredLoans.length === 0 ? (
         <div className="card p-12 text-center">
-          <BookOpen className="h-16 w-16 mx-auto text-gray-600 mb-4" />
-          <h3 className="text-xl font-medium text-gray-300">No loans found</h3>
-          <p className="text-gray-500 mt-2">
+          <BookOpen className="h-16 w-16 mx-auto text-gray-700 mb-4" />
+          <h3 className="text-xl font-medium text-gray-700">No loans found</h3>
+          <p className="text-gray-700 mt-2">
             {filter !== 'all' ? 'Try a different filter' : 'Start by borrowing a book'}
           </p>
         </div>
@@ -281,11 +281,11 @@ export default function LoansPage() {
               <div className="flex flex-col md:flex-row md:items-center gap-4">
                 {/* Book info */}
                 <div className="flex items-center gap-4 flex-1">
-                  <div className="p-3 bg-gray-700/50 rounded-xl">
+                  <div className="p-3 bg-gray-50 rounded-xl">
                     <BookOpen className="h-8 w-8 text-gray-400" />
                   </div>
                   <div className="flex-1 min-w-0">
-                    <h3 className="font-medium text-gray-100">{loan.bookTitle}</h3>
+                    <h3 className="font-medium text-gray-900">{loan.bookTitle}</h3>
                     {isLibrarian && (
                       <p className="text-sm text-gray-400">Borrowed by: {loan.userName}</p>
                     )}
