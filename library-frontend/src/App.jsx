@@ -47,6 +47,8 @@ function PublicRoute({ children }) {
 }
 
 function AppRoutes() {
+  const { user } = useAuth();
+
   return (
     <Routes>
       {/* Landing page */}
@@ -111,8 +113,11 @@ function AppRoutes() {
         }
       />
 
-      {/* Catch all */}
-      <Route path="*" element={<Navigate to="/" replace />} />
+      {/* Catch all - redirect to welcome if not authenticated, otherwise to dashboard */}
+      <Route 
+        path="*" 
+        element={user ? <Navigate to="/" replace /> : <Navigate to="/welcome" replace />} 
+      />
     </Routes>
   );
 }
