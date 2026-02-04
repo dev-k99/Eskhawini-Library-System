@@ -145,4 +145,103 @@ public class EmailService : IEmailService
             _logger.LogError(ex, "Failed to send email: {Subject} to {Email}", subject, toEmail);
         }
     }
+
+    public async Task SendPasswordResetEmailAsync(string email, string userName, string resetCode)
+    {
+        var subject = "LibraryOS - Password Reset Code";
+
+        var body = $@"
+        <div style='font-family: -apple-system, BlinkMacSystemFont, ""Segoe UI"", sans-serif; max-width: 600px; margin: 0 auto;'>
+            <div style='background: #2563eb; padding: 40px 20px; text-align: center; border-radius: 12px 12px 0 0;'>
+                <h1 style='color: white; margin: 0; font-size: 28px;'>Password Reset Request</h1>
+            </div>
+            
+            <div style='background: #ffffff; padding: 40px 30px; border: 1px solid #e5e7eb; border-top: none; border-radius: 0 0 12px 12px;'>
+                <p style='color: #374151; font-size: 16px; margin-bottom: 20px;'>
+                    Hi <strong>{userName}</strong>,
+                </p>
+                
+                <p style='color: #374151; font-size: 16px; margin-bottom: 30px;'>
+                    We received a request to reset your LibraryOS password. Use the code below to reset your password:
+                </p>
+                
+                <div style='background: #f3f4f6; padding: 30px; border-radius: 12px; text-align: center; margin: 30px 0;'>
+                    <div style='font-size: 14px; color: #6b7280; margin-bottom: 10px; text-transform: uppercase; letter-spacing: 1px;'>
+                        Your Reset Code
+                    </div>
+                    <div style='font-size: 42px; font-weight: bold; color: #2563eb; letter-spacing: 8px; font-family: monospace;'>
+                        {resetCode}
+                    </div>
+                    <div style='font-size: 13px; color: #9ca3af; margin-top: 15px;'>
+                        Code expires in 15 minutes
+                    </div>
+                </div>
+                
+                <div style='background: #fef3c7; border-left: 4px solid #f59e0b; padding: 15px 20px; border-radius: 8px; margin: 25px 0;'>
+                    <p style='color: #92400e; font-size: 14px; margin: 0;'>
+                        <strong>⚠️ Security Notice:</strong> If you didn't request this reset, please ignore this email or contact support.
+                    </p>
+                </div>
+                
+                <p style='color: #6b7280; font-size: 14px; margin-top: 30px;'>
+                    Best regards,<br/>
+                    <strong>The LibraryOS Team</strong>
+                </p>
+            </div>
+            
+            <div style='text-align: center; padding: 20px; color: #9ca3af; font-size: 12px;'>
+                <p style='margin: 5px 0;'>© 2026 LibraryOS. All rights reserved.</p>
+            </div>
+        </div>
+    ";
+
+        await SendEmailAsync(email, subject, body);
+    }
+
+    public async Task SendPasswordResetConfirmationAsync(string email, string userName)
+    {
+        var subject = "LibraryOS - Password Changed Successfully";
+
+        var body = $@"
+        <div style='font-family: -apple-system, BlinkMacSystemFont, ""Segoe UI"", sans-serif; max-width: 600px; margin: 0 auto;'>
+            <div style='background: #059669; padding: 40px 20px; text-align: center; border-radius: 12px 12px 0 0;'>
+                <div style='font-size: 48px; margin-bottom: 10px;'>✓</div>
+                <h1 style='color: white; margin: 0; font-size: 28px;'>Password Changed</h1>
+            </div>
+            
+            <div style='background: #ffffff; padding: 40px 30px; border: 1px solid #e5e7eb; border-top: none; border-radius: 0 0 12px 12px;'>
+                <p style='color: #374151; font-size: 16px; margin-bottom: 20px;'>
+                    Hi <strong>{userName}</strong>,
+                </p>
+                
+                <p style='color: #374151; font-size: 16px; margin-bottom: 20px;'>
+                    Your LibraryOS password has been successfully changed.
+                </p>
+                
+                <div style='background: #d1fae5; border-left: 4px solid #059669; padding: 15px 20px; border-radius: 8px; margin: 25px 0;'>
+                    <p style='color: #065f46; font-size: 14px; margin: 0;'>
+                        <strong>✓ All Set!</strong> You can now sign in with your new password.
+                    </p>
+                </div>
+                
+                <div style='background: #fef3c7; border-left: 4px solid #f59e0b; padding: 15px 20px; border-radius: 8px; margin: 25px 0;'>
+                    <p style='color: #92400e; font-size: 14px; margin: 0;'>
+                        <strong>⚠️ Didn't make this change?</strong> Please contact support immediately.
+                    </p>
+                </div>
+                
+                <p style='color: #6b7280; font-size: 14px; margin-top: 30px;'>
+                    Best regards,<br/>
+                    <strong>The LibraryOS Team</strong>
+                </p>
+            </div>
+            
+            <div style='text-align: center; padding: 20px; color: #9ca3af; font-size: 12px;'>
+                <p style='margin: 5px 0;'>© 2026 LibraryOS. All rights reserved.</p>
+            </div>
+        </div>
+    ";
+
+        await SendEmailAsync(email, subject, body);
+    }
 }

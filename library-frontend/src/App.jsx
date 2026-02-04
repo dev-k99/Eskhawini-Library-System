@@ -1,6 +1,7 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import Login from './components/Auth/Login';
+import ForgotPassword from './components/Auth/ForgotPassword';
 import Dashboard from './components/Dashboard/Dashboard';
 import BookCatalog from './components/Books/BookCatalog';
 import LoansPage from './components/Loans/LoansPage';
@@ -8,7 +9,7 @@ import AnalyticsPage from './components/Analytics/AnalyticsPage';
 import SustainabilityPage from './components/Sustainability/SustainabilityPage';
 import UsersAdminPage from './components/Admin/UsersAdminPage';
 import LandingPage from './components/LandingPage';
-import Layout from './components/Layout/Layout';  // ← Must be this path
+import Layout from './components/Layout/Layout';
 
 function ProtectedRoute({ children }) {
   const { user, loading } = useAuth();
@@ -51,7 +52,7 @@ function AppRoutes() {
 
   return (
     <Routes>
-      {/* Landing page */}
+      {/* Public Routes */}
       <Route path="/welcome" element={<LandingPage />} />
 
       <Route
@@ -59,6 +60,15 @@ function AppRoutes() {
         element={
           <PublicRoute>
             <Login />
+          </PublicRoute>
+        }
+      />
+
+      <Route
+        path="/forgot-password"
+        element={
+          <PublicRoute>
+            <ForgotPassword />
           </PublicRoute>
         }
       />
