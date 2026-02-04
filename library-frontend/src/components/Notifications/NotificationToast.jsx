@@ -90,13 +90,13 @@ export default function NotificationToast() {
   const getTypeStyles = (type) => {
     switch (type) {
       case 'success':
-        return 'bg-green-500/10 border-green-500/30 text-green-400';
+        return 'bg-emerald-100 border-green-500/30 text-emerald-600';
       case 'warning':
-        return 'bg-yellow-500/10 border-yellow-500/30 text-yellow-400';
+        return 'bg-yellow-100 border-yellow-500/30 text-yellow-600';
       case 'error':
-        return 'bg-red-500/10 border-red-500/30 text-red-400';
+        return 'bg-red-100 border-red-500/30 text-red-600';
       default:
-        return 'bg-primary-500/10 border-primary-500/30 text-primary-400';
+        return 'bg-blue-50 border-blue-200 text-blue-700';
     }
   };
 
@@ -111,8 +111,8 @@ export default function NotificationToast() {
           >
             <Icon className="h-5 w-5 flex-shrink-0 mt-0.5" />
             <div className="flex-1 min-w-0">
-              <p className="font-medium text-sm text-gray-100">{notification.title}</p>
-              <p className="text-sm text-gray-300 mt-0.5">{notification.message}</p>
+              <p className="font-medium text-sm text-gray-900">{notification.title}</p>
+              <p className="text-sm text-gray-700 mt-0.5">{notification.message}</p>
             </div>
             <button
               onClick={() => removeNotification(notification.id)}
