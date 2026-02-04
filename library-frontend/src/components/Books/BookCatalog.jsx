@@ -71,16 +71,16 @@ function BookModal({ isOpen, onClose, onSave, editBook }) {
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
       {/* Backdrop */}
-      <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={onClose} />
+      <div className="absolute inset-0 bg-black/20 backdrop-blur-sm" onClick={onClose} />
 
       {/* Modal */}
-      <div className="relative w-full max-w-lg bg-gray-800 border border-gray-700 rounded-2xl shadow-2xl max-h-[90vh] overflow-y-auto">
+      <div className="relative w-full max-w-lg bg-white border border-gray-200 rounded-2xl shadow-2xl max-h-[90vh] overflow-y-auto">
         {/* Header */}
-        <div className="flex items-center justify-between p-5 border-b border-gray-700">
-          <h2 className="text-lg font-semibold text-gray-100">
+        <div className="flex items-center justify-between p-5 border-b border-gray-200">
+          <h2 className="text-lg font-semibold text-gray-900">
             {editBook ? 'Edit Book' : 'Add New Book'}
           </h2>
-          <button onClick={onClose} className="p-1 hover:bg-gray-700 rounded-lg transition-colors">
+          <button onClick={onClose} className="p-1 hover:bg-gray-100 rounded-lg transition-colors">
             <X className="h-5 w-5 text-gray-400" />
           </button>
         </div>
@@ -88,20 +88,20 @@ function BookModal({ isOpen, onClose, onSave, editBook }) {
         {/* Body */}
         <div className="p-5 space-y-4">
           {error && (
-            <div className="px-4 py-2 bg-red-500/10 border border-red-500/30 rounded-lg text-red-400 text-sm">
+            <div className="px-4 py-2 bg-red-100 border border-red-500/30 rounded-lg text-red-600 text-sm">
               {error}
             </div>
           )}
 
           <div>
-            <label className="block text-sm text-gray-400 mb-1">Title *</label>
+            <label className="block text-sm text-gray-700 mb-1">Title *</label>
             <input name="title" value={form.title} onChange={handleChange}
               placeholder="e.g. Clean Code"
               className="input-field w-full" />
           </div>
 
           <div>
-            <label className="block text-sm text-gray-400 mb-1">Author *</label>
+            <label className="block text-sm text-gray-700 mb-1">Author *</label>
             <input name="author" value={form.author} onChange={handleChange}
               placeholder="e.g. Robert C. Martin"
               className="input-field w-full" />
@@ -109,34 +109,34 @@ function BookModal({ isOpen, onClose, onSave, editBook }) {
 
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm text-gray-400 mb-1">ISBN</label>
+              <label className="block text-sm text-gray-700 mb-1">ISBN</label>
               <input name="isbn" value={form.isbn} onChange={handleChange}
                 placeholder="978-..."
                 className="input-field w-full" />
             </div>
             <div>
-              <label className="block text-sm text-gray-400 mb-1">Copies</label>
+              <label className="block text-sm text-gray-700 mb-1">Copies</label>
               <input name="totalCopies" type="number" min="1" value={form.totalCopies} onChange={handleChange}
                 className="input-field w-full" />
             </div>
           </div>
 
           <div>
-            <label className="block text-sm text-gray-400 mb-1">Genre</label>
+            <label className="block text-sm text-gray-700 mb-1">Genre</label>
             <select name="genre" value={form.genre} onChange={handleChange} className="input-field w-full">
               {genres.map(g => <option key={g} value={g}>{g}</option>)}
             </select>
           </div>
 
           <div>
-            <label className="block text-sm text-gray-400 mb-1">Description</label>
+            <label className="block text-sm text-gray-700 mb-1">Description</label>
             <textarea name="description" value={form.description} onChange={handleChange}
               rows={3} placeholder="Short description of the book..."
               className="input-field w-full resize-none" />
           </div>
 
           <div>
-            <label className="block text-sm text-gray-400 mb-1">Cover URL</label>
+            <label className="block text-sm text-gray-700 mb-1">Cover URL</label>
             <input name="coverUrl" value={form.coverUrl} onChange={handleChange}
               placeholder="https://..."
               className="input-field w-full" />
@@ -144,8 +144,8 @@ function BookModal({ isOpen, onClose, onSave, editBook }) {
         </div>
 
         {/* Footer */}
-        <div className="flex items-center justify-end gap-3 p-5 border-t border-gray-700">
-          <button onClick={onClose} className="px-4 py-2 text-sm text-gray-400 hover:text-gray-100 transition-colors">
+        <div className="flex items-center justify-end gap-3 p-5 border-t border-gray-200">
+          <button onClick={onClose} className="px-4 py-2 text-sm text-gray-400 hover:text-gray-900 transition-colors">
             Cancel
           </button>
           <button onClick={handleSubmit} disabled={saving}
@@ -179,23 +179,23 @@ function DeleteModal({ isOpen, book, onClose, onConfirm }) {
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-      <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={onClose} />
-      <div className="relative w-full max-w-sm bg-gray-800 border border-gray-700 rounded-2xl shadow-2xl">
+      <div className="absolute inset-0 bg-black/20 backdrop-blur-sm" onClick={onClose} />
+      <div className="relative w-full max-w-sm bg-white border border-gray-200 rounded-2xl shadow-2xl">
         <div className="p-6">
-          <div className="w-12 h-12 rounded-full bg-red-500/10 flex items-center justify-center mb-4">
-            <Trash2 className="h-6 w-6 text-red-400" />
+          <div className="w-12 h-12 rounded-full bg-red-100 flex items-center justify-center mb-4">
+            <Trash2 className="h-6 w-6 text-red-600" />
           </div>
-          <h3 className="text-lg font-semibold text-gray-100">Delete Book?</h3>
+          <h3 className="text-lg font-semibold text-gray-900">Delete Book?</h3>
           <p className="text-sm text-gray-400 mt-1">
-            Are you sure you want to delete <span className="text-gray-200 font-medium">"{book.title}"</span>? This action cannot be undone.
+            Are you sure you want to delete <span className="text-gray-800 font-medium">"{book.title}"</span>? This action cannot be undone.
           </p>
         </div>
         <div className="flex items-center justify-end gap-3 px-6 pb-6">
-          <button onClick={onClose} className="px-4 py-2 text-sm text-gray-400 hover:text-gray-100 transition-colors">
+          <button onClick={onClose} className="px-4 py-2 text-sm text-gray-400 hover:text-gray-900 transition-colors">
             Cancel
           </button>
           <button onClick={handleDelete} disabled={deleting}
-            className="px-4 py-2 text-sm bg-red-500/10 hover:bg-red-500/20 text-red-400 rounded-xl transition-colors flex items-center gap-2">
+            className="px-4 py-2 text-sm bg-red-100 hover:bg-red-100 text-red-600 rounded-xl transition-colors flex items-center gap-2">
             {deleting ? <Loader2 className="h-4 w-4 animate-spin" /> : <Trash2 className="h-4 w-4" />}
             {deleting ? 'Deleting...' : 'Delete'}
           </button>
@@ -307,8 +307,8 @@ export default function BookCatalog() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
-          <h1 className="text-3xl font-bold text-gray-100">Book Catalog</h1>
-          <p className="text-gray-400 mt-1">
+          <h1 className="text-2xl font-bold text-black">Book Catalog</h1>
+          <p className="text-gray-700">
             {canManage ? 'Manage and browse your library collection' : 'Discover your next great read'}
           </p>
         </div>
@@ -335,7 +335,7 @@ export default function BookCatalog() {
             />
             <button onClick={startVoiceSearch}
               className={`absolute right-4 top-1/2 -translate-y-1/2 p-1 rounded-lg transition-colors
-                ${isListening ? 'text-accent-400 voice-pulse' : 'text-gray-400 hover:text-gray-100'}`}>
+                ${isListening ? 'text-emerald-600 voice-pulse' : 'text-gray-400 hover:text-gray-900'}`}>
               {isListening ? <Mic className="h-5 w-5" /> : <MicOff className="h-5 w-5" />}
             </button>
           </div>
@@ -352,13 +352,13 @@ export default function BookCatalog() {
             </select>
           </div>
 
-          <div className="flex gap-1 bg-gray-700/50 rounded-xl p-1">
+          <div className="flex gap-1 bg-gray-50 rounded-xl p-1">
             <button onClick={() => setViewMode('grid')}
-              className={`p-2 rounded-lg transition-colors ${viewMode === 'grid' ? 'bg-primary-500 text-white' : 'text-gray-400 hover:text-gray-100'}`}>
+              className={`p-2 rounded-lg transition-colors ${viewMode === 'grid' ? 'bg-blue-600 text-white' : 'text-gray-400 hover:text-gray-900'}`}>
               <Grid className="h-5 w-5" />
             </button>
             <button onClick={() => setViewMode('list')}
-              className={`p-2 rounded-lg transition-colors ${viewMode === 'list' ? 'bg-primary-500 text-white' : 'text-gray-400 hover:text-gray-100'}`}>
+              className={`p-2 rounded-lg transition-colors ${viewMode === 'list' ? 'bg-blue-600 text-white' : 'text-gray-400 hover:text-gray-900'}`}>
               <List className="h-5 w-5" />
             </button>
           </div>
@@ -368,13 +368,13 @@ export default function BookCatalog() {
       {/* Loading / Empty */}
       {loading ? (
         <div className="flex justify-center items-center py-20">
-          <Loader2 className="h-10 w-10 animate-spin text-primary-500" />
+          <Loader2 className="h-10 w-10 animate-spin text-blue-600" />
         </div>
       ) : books.length === 0 ? (
         <div className="card p-12 text-center">
-          <BookOpen className="h-16 w-16 mx-auto text-gray-600 mb-4" />
-          <h3 className="text-xl font-medium text-gray-300">No books found</h3>
-          <p className="text-gray-500 mt-2">Try adjusting your search or filters</p>
+          <BookOpen className="h-16 w-16 mx-auto text-gray-700 mb-4" />
+          <h3 className="text-xl font-medium text-gray-700">No books found</h3>
+          <p className="text-gray-700 mt-2">Try adjusting your search or filters</p>
         </div>
       ) : (
         <>
@@ -387,22 +387,22 @@ export default function BookCatalog() {
               <div key={book.id} className={`card-hover ${viewMode === 'list' ? 'flex gap-4' : ''}`}>
                 {/* Cover */}
                 <div className={`bg-gradient-to-br from-primary-600/20 to-accent-600/20 flex items-center justify-center
-                  ${viewMode === 'grid' ? 'h-48 rounded-t-2xl' : 'w-32 h-40 rounded-l-2xl flex-shrink-0'}`}>
+                  ${viewMode === 'grid' ? 'h-48 rounded-t-xl' : 'w-32 h-40 rounded-l-2xl flex-shrink-0'}`}>
                   {book.coverUrl ? (
                     <img src={book.coverUrl} alt={book.title} className="w-full h-full object-cover rounded-t-2xl" />
                   ) : (
-                    <BookOpen className="h-16 w-16 text-gray-500" />
+                    <BookOpen className="h-16 w-16 text-gray-700" />
                   )}
                 </div>
 
                 {/* Details */}
                 <div className="p-4 flex-1 flex flex-col">
-                  <h3 className="font-semibold text-gray-100 line-clamp-2">{book.title}</h3>
+                  <h3 className="font-semibold text-gray-900 line-clamp-2">{book.title}</h3>
                   <p className="text-sm text-gray-400 mt-1">{book.author}</p>
                   <div className="flex items-center gap-2 mt-2 flex-wrap">
-                    <span className="px-2 py-1 text-xs bg-gray-700/50 rounded-lg text-gray-300">{book.genre}</span>
+                    <span className="px-2 py-1 text-xs bg-gray-50 rounded-lg text-gray-700">{book.genre}</span>
                     <span className={`px-2 py-1 text-xs rounded-lg ${
-                      book.availableCopies > 0 ? 'bg-green-500/20 text-green-400' : 'bg-red-500/20 text-red-400'
+                      book.availableCopies > 0 ? 'bg-emerald-100 text-emerald-600' : 'bg-red-100 text-red-600'
                     }`}>
                       {book.availableCopies > 0 ? `${book.availableCopies} available` : 'Unavailable'}
                     </span>
@@ -430,7 +430,7 @@ export default function BookCatalog() {
                     {/* Edit — Admin & Librarian */}
                     {canManage && (
                       <button onClick={() => openEditModal(book)}
-                        className="p-2 rounded-xl bg-gray-700/50 hover:bg-primary-500/20 text-gray-400 hover:text-primary-400 transition-colors"
+                        className="p-2 rounded-xl bg-gray-50 hover:bg-blue-100 text-gray-400 hover:text-blue-600 transition-colors"
                         title="Edit book">
                         <Pencil className="h-4 w-4" />
                       </button>
@@ -439,7 +439,7 @@ export default function BookCatalog() {
                     {/* Delete — Admin only */}
                     {canDelete && (
                       <button onClick={() => setDeleteBook(book)}
-                        className="p-2 rounded-xl bg-gray-700/50 hover:bg-red-500/20 text-gray-400 hover:text-red-400 transition-colors"
+                        className="p-2 rounded-xl bg-gray-50 hover:bg-red-100 text-gray-400 hover:text-red-600 transition-colors"
                         title="Delete book">
                         <Trash2 className="h-4 w-4" />
                       </button>
