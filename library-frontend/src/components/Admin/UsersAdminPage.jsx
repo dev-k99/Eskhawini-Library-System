@@ -77,8 +77,8 @@ export default function UsersAdminPage() {
 
   const getRoleIcon = (role) => {
     switch (role) {
-      case 'Admin': return <Shield className="h-4 w-4 text-red-400" />;
-      case 'Librarian': return <BookOpen className="h-4 w-4 text-blue-400" />;
+      case 'Admin': return <Shield className="h-4 w-4 text-red-600" />;
+      case 'Librarian': return <BookOpen className="h-4 w-4 text-blue-600" />;
       default: return <User className="h-4 w-4 text-gray-400" />;
     }
   };
@@ -91,9 +91,9 @@ export default function UsersAdminPage() {
   if (!isAdmin) {
     return (
       <div className="card p-12 text-center">
-        <Shield className="h-16 w-16 mx-auto text-gray-600 mb-4" />
-        <h3 className="text-xl font-medium text-gray-300">Access Denied</h3>
-        <p className="text-gray-500 mt-2">Only administrators can manage users</p>
+        <Shield className="h-16 w-16 mx-auto text-gray-700 mb-4" />
+        <h3 className="text-xl font-medium text-gray-700">Access Denied</h3>
+        <p className="text-gray-700 mt-2">Only administrators can manage users</p>
       </div>
     );
   }
@@ -101,7 +101,7 @@ export default function UsersAdminPage() {
   if (loading) {
     return (
       <div className="flex justify-center items-center py-20">
-        <Loader2 className="h-10 w-10 animate-spin text-primary-500" />
+        <Loader2 className="h-10 w-10 animate-spin text-blue-600" />
       </div>
     );
   }
@@ -111,7 +111,7 @@ export default function UsersAdminPage() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
-          <h1 className="text-3xl font-bold text-gray-100">User Management</h1>
+          <h1 className="text-3xl font-bold text-gray-900">User Management</h1>
           <p className="text-gray-400 mt-1">Manage library users and roles</p>
         </div>
         <button onClick={() => setShowModal(true)} className="btn-primary flex items-center gap-2">
@@ -137,7 +137,7 @@ export default function UsersAdminPage() {
       <div className="card overflow-hidden">
         <table className="w-full">
           <thead>
-            <tr className="bg-gray-700/30">
+            <tr className="bg-gray-100">
               <th className="text-left p-4 text-sm font-medium text-gray-400">User</th>
               <th className="text-left p-4 text-sm font-medium text-gray-400">Email</th>
               <th className="text-left p-4 text-sm font-medium text-gray-400">Role</th>
@@ -147,7 +147,7 @@ export default function UsersAdminPage() {
           </thead>
           <tbody className="divide-y divide-gray-700/50">
             {filteredUsers.map((user) => (
-              <tr key={user.id} className="hover:bg-gray-700/20">
+              <tr key={user.id} className="hover:bg-gray-50">
                 <td className="p-4">
                   <div className="flex items-center gap-3">
                     <div className="w-10 h-10 rounded-full bg-gradient-to-br from-primary-500 to-accent-500 flex items-center justify-center">
@@ -155,14 +155,14 @@ export default function UsersAdminPage() {
                         {user.name.charAt(0).toUpperCase()}
                       </span>
                     </div>
-                    <span className="font-medium text-gray-100">{user.name}</span>
+                    <span className="font-medium text-gray-900">{user.name}</span>
                   </div>
                 </td>
                 <td className="p-4 text-gray-400">{user.email}</td>
                 <td className="p-4">
-                  <span className="flex items-center gap-2 px-3 py-1 bg-gray-700/50 rounded-lg w-fit">
+                  <span className="flex items-center gap-2 px-3 py-1 bg-gray-50 rounded-lg w-fit">
                     {getRoleIcon(user.role)}
-                    <span className="text-gray-300">{user.role}</span>
+                    <span className="text-gray-700">{user.role}</span>
                   </span>
                 </td>
                 <td className="p-4 text-gray-400">
@@ -172,13 +172,13 @@ export default function UsersAdminPage() {
                   <div className="flex justify-end gap-2">
                     <button
                       onClick={() => openEditModal(user)}
-                      className="p-2 text-gray-400 hover:text-gray-100 hover:bg-gray-700/50 rounded-lg"
+                      className="p-2 text-gray-400 hover:text-gray-900 hover:bg-gray-50 rounded-lg"
                     >
                       <Edit2 className="h-4 w-4" />
                     </button>
                     <button
                       onClick={() => handleDelete(user.id)}
-                      className="p-2 text-gray-400 hover:text-red-400 hover:bg-red-500/10 rounded-lg"
+                      className="p-2 text-gray-400 hover:text-red-600 hover:bg-red-100 rounded-lg"
                     >
                       <Trash2 className="h-4 w-4" />
                     </button>
@@ -194,12 +194,12 @@ export default function UsersAdminPage() {
       {showModal && (
         <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
           <div className="card p-6 max-w-md w-full animate-slide-up">
-            <h3 className="text-xl font-semibold text-gray-100 mb-6">
+            <h3 className="text-xl font-semibold text-gray-900 mb-6">
               {editingUser ? 'Edit User' : 'Add New User'}
             </h3>
             <form onSubmit={handleSubmit} className="space-y-4">
               <div>
-                <label className="block text-sm text-gray-400 mb-2">Name</label>
+                <label className="block text-sm text-gray-700 mb-2">Name</label>
                 <input
                   type="text"
                   value={formData.name}
@@ -209,7 +209,7 @@ export default function UsersAdminPage() {
                 />
               </div>
               <div>
-                <label className="block text-sm text-gray-400 mb-2">Email</label>
+                <label className="block text-sm text-gray-700 mb-2">Email</label>
                 <input
                   type="email"
                   value={formData.email}
@@ -220,7 +220,7 @@ export default function UsersAdminPage() {
               </div>
               {!editingUser && (
                 <div>
-                  <label className="block text-sm text-gray-400 mb-2">Password</label>
+                  <label className="block text-sm text-gray-700 mb-2">Password</label>
                   <input
                     type="password"
                     value={formData.password}
@@ -232,7 +232,7 @@ export default function UsersAdminPage() {
                 </div>
               )}
               <div>
-                <label className="block text-sm text-gray-400 mb-2">Role</label>
+                <label className="block text-sm text-gray-700 mb-2">Role</label>
                 <select
                   value={formData.role}
                   onChange={(e) => setFormData({ ...formData, role: e.target.value })}
