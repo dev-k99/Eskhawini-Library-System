@@ -17,6 +17,7 @@ packages/
 library-frontend/node_modules/
 library-frontend/dist/
 library-frontend/.env.local
+library-frontend\.env.example
 
 # IDE
 .idea/
@@ -31,4 +32,6 @@ Thumbs.db
 .env
 *.env.local
 appsettings.Development.json
+appsettings.json
+appsettings.Production.json
 LibraryManagement.API/appsettings.Production.json
