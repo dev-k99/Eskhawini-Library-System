@@ -9,11 +9,16 @@ namespace LibraryManagement.API.Controllers;
 public class AuthController : ControllerBase
 {
     private readonly IAuthService _authService;
+    private readonly IPasswordResetService _passwordResetService;
     private readonly ILogger<AuthController> _logger;
 
-    public AuthController(IAuthService authService, ILogger<AuthController> logger)
+    public AuthController(
+        IAuthService authService,
+        IPasswordResetService passwordResetService,
+        ILogger<AuthController> logger)
     {
         _authService = authService;
+        _passwordResetService = passwordResetService;
         _logger = logger;
     }
 
@@ -58,6 +63,43 @@ public class AuthController : ControllerBase
         catch (UnauthorizedAccessException ex)
         {
             return Unauthorized(new { message = ex.Message });
+        }
+    }
+
+    [HttpPost("request-password-reset")]
+    public async Task<ActionResult<PasswordResetResponse>> RequestPasswordReset([FromBody] RequestPasswordResetRequest request)
+    {
+        try
+        {
+            var response = await _passwordResetService.RequestPasswordResetAsync(request.Email);
+            return Ok(response);
+        }
+        catch (InvalidOperationException ex)
+        {
+            return BadRequest(new { message = ex.Message });
+        }
+    }
+
+    [HttpPost("reset-password")]
+    public async Task<ActionResult<PasswordResetResponse>> ResetPassword([FromBody] ResetPasswordRequest request)
+    {
+        try
+        {
+            var response = await _passwordResetService.ResetPasswordAsync(
+                request.Email,
+                request.ResetCode,
+                request.NewPassword);
+            
+            if (!response.Success)
+            {
+                return BadRequest(new { message = response.Message });
+            }
+
+            return Ok(response);
+        }
+        catch (InvalidOperationException ex)
+        {
+            return BadRequest(new { message = ex.Message });
         }
     }
 }
