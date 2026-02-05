@@ -10,8 +10,10 @@
 ---
 
 ## 🎯 Project Overview
-
+![Landing Page](screenshots/Landing.png) ![Dashboard](screenshots/Dashboard.png)
+![Code](screenshots/QRCode.png) ![analytics](screenshots/Analytics.png) ![email](screenshots/Email.png)
 LibraryOS is a production-ready library management system built to solve real-world challenges in modern library operations. The application implements industry-standard patterns including **Clean Architecture**, **CQRS principles**, and **Event-Driven Design** using **SignalR** for real-time updates.
+
 
 **Key Achievement**: Successfully integrated 8+ complex systems (authentication, real-time notifications, QR code generation, email services, analytics, sustainability tracking) into a cohesive, scalable application.
 
@@ -62,6 +64,7 @@ The project follows **Clean Architecture** principles with clear separation of c
 ## 💡 Technical Highlights & Problem Solving
 
 ### 1. Real-Time Notification System
+![Email notifications](screenshots/Email.png)
 
 **Challenge**: Users needed instant updates when books became available or loans were due, without constantly polling the server.
 
@@ -142,7 +145,7 @@ _resetCodes[email] = new ResetCodeData {
 ---
 
 ### 4. QR Code Integration for Loan Management
-
+![QR Code](screenshots/QRCode.png)
 **Challenge**: Speed up checkout/return process and reduce manual data entry errors.
 
 **Solution**: Integrated **ZXing.Net** for dynamic QR code generation:
@@ -164,7 +167,7 @@ var qrBitmap = writer.Write(qrData);
 ---
 
 ### 5. Role-Based Access Control (RBAC)
-
+![Backend](screenshots/Backend.png)
 **Challenge**: Different user types (Admin, Librarian, Patron) need different permissions across the application.
 
 **Solution**: Implemented comprehensive RBAC with enum-based roles:
@@ -189,7 +192,7 @@ const canManageBooks = isAdmin || isLibrarian;
 ---
 
 ### 6. Sustainability Tracking & Analytics
-
+![Analytics](screenshots/Analytics.png)
 **Challenge**: Calculate environmental impact of library usage to promote eco-friendly reading habits.
 
 **Solution**: Built carbon footprint calculator using industry standards:
@@ -728,8 +731,7 @@ LibraryManagement/
 #### 1. Clone Repository
 
 ```bash
-git clone https://github.com/yourusername/library-os.git
-cd library-os
+git clone https://github.com/dev-k99/Eskhawini-Library-System
 ```
 
 #### 2. Database Setup
