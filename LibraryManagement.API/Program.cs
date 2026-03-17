@@ -16,10 +16,11 @@ using Microsoft.OpenApi.Models;
 var builder = WebApplication.CreateBuilder(args);
 
 // ── Startup Validation ─────────────────────────────────────────────────────────
-var jwtSecret = builder.Configuration["JwtSettings:Secret"];
-if (string.IsNullOrWhiteSpace(jwtSecret) || jwtSecret.Contains("SET_VIA_ENV"))
+var jwtSecret = builder.Configuration["JwtSettings:Secret"] ?? "";
+if (builder.Environment.IsProduction() &&
+    (string.IsNullOrWhiteSpace(jwtSecret) || jwtSecret.Contains("SET_VIA_ENV")))
     throw new InvalidOperationException(
-        "JwtSettings:Secret is not configured. Set it via environment variable or user secrets.");
+        "JwtSettings:Secret is not configured. Add it in Azure App Service → Configuration → Application Settings.");
 
 // ── Database ───────────────────────────────────────────────────────────────────
 builder.Services.AddDbContext<LibraryDbContext>(options =>
