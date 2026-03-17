@@ -1,8 +1,11 @@
 import { HubConnectionBuilder, LogLevel } from '@microsoft/signalr';
 
-// Strip /api from the base URL to get the host root.
-// Fallback has NO /api suffix — the hub is mapped at /hubs/library, not /api/hubs/library.
-const HUB_URL = import.meta.env.VITE_API_URL?.replace('/api', '') || 'https://localhost:7090';
+// VITE_HUB_URL is the preferred env var (just the origin, no /api suffix).
+// Falls back to stripping /api from VITE_API_URL via regex to handle path variations.
+const HUB_URL =
+  import.meta.env.VITE_HUB_URL ??
+  import.meta.env.VITE_API_URL?.replace(/\/api\/?$/, '') ??
+  'http://localhost:7090';
 
 class SignalRService {
   constructor() {

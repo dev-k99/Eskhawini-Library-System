@@ -11,39 +11,31 @@ import UsersAdminPage from './components/Admin/UsersAdminPage';
 import LandingPage from './components/LandingPage';
 import Layout from './components/Layout/Layout';
 
+const Spinner = () => (
+  <div className="min-h-screen flex items-center justify-center">
+    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-500"></div>
+  </div>
+);
+
 function ProtectedRoute({ children }) {
   const { user, loading } = useAuth();
+  if (loading) return <Spinner />;
+  if (!user) return <Navigate to="/login" replace />;
+  return <Layout>{children}</Layout>;
+}
 
-  if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-500"></div>
-      </div>
-    );
-  }
-
-  if (!user) {
-    return <Navigate to="/login" replace />;
-  }
-
+function AdminRoute({ children }) {
+  const { user, loading, isAdmin } = useAuth();
+  if (loading) return <Spinner />;
+  if (!user) return <Navigate to="/login" replace />;
+  if (!isAdmin) return <Navigate to="/" replace />;
   return <Layout>{children}</Layout>;
 }
 
 function PublicRoute({ children }) {
   const { user, loading } = useAuth();
-
-  if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-500"></div>
-      </div>
-    );
-  }
-
-  if (user) {
-    return <Navigate to="/" replace />;
-  }
-
+  if (loading) return <Spinner />;
+  if (user) return <Navigate to="/" replace />;
   return children;
 }
 
@@ -109,9 +101,9 @@ function AppRoutes() {
       <Route
         path="/users"
         element={
-          <ProtectedRoute>
+          <AdminRoute>
             <UsersAdminPage />
-          </ProtectedRoute>
+          </AdminRoute>
         }
       />
       <Route
