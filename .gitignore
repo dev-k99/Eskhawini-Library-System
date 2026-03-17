@@ -33,5 +33,3 @@ Thumbs.db
 *.env.local
 appsettings.Development.json
 appsettings.json
-appsettings.Production.json
-LibraryManagement.API/appsettings.Production.json

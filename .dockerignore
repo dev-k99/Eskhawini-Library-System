@@ -1,0 +1,11 @@
+**/bin
+**/obj
+**/.vs
+**/*.user
+**/.vscode
+library-frontend/
+.git
+.github
+screenshots
+README.md
+*.md

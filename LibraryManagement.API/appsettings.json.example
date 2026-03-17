@@ -1,0 +1,34 @@
+{
+  "ConnectionStrings": {
+    "DefaultConnection": "Host=localhost;Port=5432;Database=librarydb;Username=postgres;Password=YOUR_LOCAL_DB_PASSWORD;SSL Mode=Prefer;Trust Server Certificate=true"
+  },
+  "JwtSettings": {
+    "Secret": "ANY_RANDOM_STRING_AT_LEAST_32_CHARS",
+    "Issuer": "LibraryManagementAPI",
+    "Audience": "LibraryManagementClient",
+    "ExpiryMinutes": "60"
+  },
+  "Logging": {
+    "LogLevel": {
+      "Default": "Information",
+      "Microsoft.AspNetCore": "Warning",
+      "Microsoft.EntityFrameworkCore": "Warning"
+    }
+  },
+  "Email": {
+    "FromEmail": "your@gmail.com",
+    "FromName": "LibraryOS Dev",
+    "SmtpHost": "smtp.gmail.com",
+    "SmtpPort": 587,
+    "SmtpUser": "your@gmail.com",
+    "SmtpPassword": "your-gmail-app-password",
+    "EnableSsl": true
+  },
+  "Cors": {
+    "AllowedOrigins": [
+      "http://localhost:5173",
+      "https://localhost:5173"
+    ]
+  },
+  "AllowedHosts": "*"
+}
