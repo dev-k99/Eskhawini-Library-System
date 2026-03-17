@@ -1,10 +1,30 @@
+using System.ComponentModel.DataAnnotations;
 using LibraryManagement.Core.Entities;
 
 namespace LibraryManagement.Core.DTOs;
 
 // Authentication DTOs
-public record RegisterRequest(string Name, string Email, string Password);
-public record LoginRequest(string Email, string Password);
+public class RegisterRequest
+{
+    [Required, MaxLength(100)]
+    public string Name { get; set; } = "";
+
+    [Required, EmailAddress, MaxLength(255)]
+    public string Email { get; set; } = "";
+
+    [Required, MinLength(8), MaxLength(128)]
+    public string Password { get; set; } = "";
+}
+
+public class LoginRequest
+{
+    [Required, EmailAddress, MaxLength(255)]
+    public string Email { get; set; } = "";
+
+    [Required]
+    public string Password { get; set; } = "";
+}
+
 public record AuthResponse(string Token, string RefreshToken, UserDto User);
 public record RefreshTokenRequest(string RefreshToken);
 
@@ -28,15 +48,29 @@ public record BookDto(
     DateTime CreatedAt
 );
 
-public record CreateBookRequest(
-    string Title, 
-    string Author, 
-    string ISBN, 
-    string Genre,
-    string? CoverUrl,
-    string? Description,
-    int TotalCopies = 1
-);
+public class CreateBookRequest
+{
+    [Required, MaxLength(300)]
+    public string Title { get; set; } = "";
+
+    [Required, MaxLength(200)]
+    public string Author { get; set; } = "";
+
+    [MaxLength(20)]
+    public string ISBN { get; set; } = "";
+
+    [Required, MaxLength(100)]
+    public string Genre { get; set; } = "";
+
+    [Url, MaxLength(500)]
+    public string? CoverUrl { get; set; }
+
+    [MaxLength(2000)]
+    public string? Description { get; set; }
+
+    [Range(1, 1000)]
+    public int TotalCopies { get; set; } = 1;
+}
 
 public record UpdateBookRequest(
     string? Title, 
