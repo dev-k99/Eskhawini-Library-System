@@ -1,6 +1,9 @@
 import axios from 'axios';
 
-const API_URL = import.meta.env.VITE_API_URL || 'https://localhost:7090/api';
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:7090/api';
+if (!import.meta.env.VITE_API_URL && import.meta.env.PROD) {
+  throw new Error('VITE_API_URL is not set. Configure it in your Vercel environment variables.');
+}
 
 const api = axios.create({
   baseURL: API_URL,
@@ -18,37 +21,67 @@ api.interceptors.request.use((config) => {
   return config;
 });
 
+// Token refresh state — prevents multiple concurrent refresh requests (race condition fix)
+let isRefreshing = false;
+let refreshSubscribers = [];
+
+const onRefreshed = (token) => {
+  refreshSubscribers.forEach((cb) => cb(token));
+  refreshSubscribers = [];
+};
+
+const addRefreshSubscriber = (cb) => refreshSubscribers.push(cb);
+
 // Handle token refresh on 401
 api.interceptors.response.use(
   (response) => response,
   async (error) => {
     const originalRequest = error.config;
-    
+
     if (error.response?.status === 401 && !originalRequest._retry) {
       originalRequest._retry = true;
-      
+
       const refreshToken = localStorage.getItem('refreshToken');
-      if (refreshToken) {
-        try {
-          const response = await axios.post(`${API_URL}/auth/refresh`, {
-            refreshToken,
+      if (!refreshToken) {
+        window.location.href = '/login';
+        return Promise.reject(error);
+      }
+
+      // If a refresh is already in-flight, queue this request to retry once done
+      if (isRefreshing) {
+        return new Promise((resolve) => {
+          addRefreshSubscriber((token) => {
+            originalRequest.headers.Authorization = `Bearer ${token}`;
+            resolve(api(originalRequest));
           });
-          
-          const { token, refreshToken: newRefreshToken } = response.data;
-          localStorage.setItem('token', token);
-          localStorage.setItem('refreshToken', newRefreshToken);
-          
-          originalRequest.headers.Authorization = `Bearer ${token}`;
-          return api(originalRequest);
-        } catch (refreshError) {
-          localStorage.removeItem('token');
-          localStorage.removeItem('refreshToken');
-          localStorage.removeItem('user');
-          window.location.href = '/login';
-        }
+        });
+      }
+
+      isRefreshing = true;
+
+      try {
+        const response = await axios.post(`${API_URL}/auth/refresh`, { refreshToken });
+        const { token, refreshToken: newRefreshToken } = response.data;
+
+        localStorage.setItem('token', token);
+        localStorage.setItem('refreshToken', newRefreshToken);
+
+        isRefreshing = false;
+        onRefreshed(token);
+
+        originalRequest.headers.Authorization = `Bearer ${token}`;
+        return api(originalRequest);
+      } catch (refreshError) {
+        isRefreshing = false;
+        refreshSubscribers = [];
+        localStorage.removeItem('token');
+        localStorage.removeItem('refreshToken');
+        localStorage.removeItem('user');
+        window.location.href = '/login';
+        return Promise.reject(refreshError);
       }
     }
-    
+
     return Promise.reject(error);
   }
 );
