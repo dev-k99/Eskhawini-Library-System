@@ -7,6 +7,7 @@ public interface IUserRepository
 {
     Task<User?> GetByIdAsync(int id);
     Task<User?> GetByEmailAsync(string email);
+    Task<User?> GetByRefreshTokenAsync(string refreshToken);
     Task<List<User>> GetAllAsync();
     Task<User> CreateAsync(User user);
     Task<User> UpdateAsync(User user);
@@ -38,6 +39,7 @@ public interface ILoanRepository
 public interface IReservationRepository
 {
     Task<Reservation?> GetByIdAsync(int id);
+    Task<List<Reservation>> GetAllAsync();
     Task<List<Reservation>> GetByUserIdAsync(int userId);
     Task<List<Reservation>> GetByBookIdAsync(int bookId);
     Task<Reservation> CreateAsync(Reservation reservation);
@@ -72,6 +74,6 @@ public interface INotificationService
     Task NotifyLoanDueSoonAsync(int userId, int loanId, string bookTitle, DateTime dueDate);
 
     // Called when a book transitions to Available (not currently invoked anywhere,
-    // but NotificationService implements it — keep for future use)
+    // but NotificationService implements it ï¿½ keep for future use)
     Task NotifyBookAvailableAsync(int bookId, string bookTitle);
 }
