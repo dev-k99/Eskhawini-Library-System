@@ -1,7 +1,10 @@
 using LibraryManagement.Core.DTOs;
+using LibraryManagement.Core.Entities;
 using LibraryManagement.Core.Interfaces;
+using LibraryManagement.Infrastructure.Data;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using System.Collections.Concurrent;
+using System.Security.Cryptography;
 
 namespace LibraryManagement.Infrastructure.Services;
 
@@ -9,18 +12,18 @@ public class PasswordResetService : IPasswordResetService
 {
     private readonly IUserRepository _userRepository;
     private readonly IEmailService _emailService;
+    private readonly LibraryDbContext _context;
     private readonly ILogger<PasswordResetService> _logger;
-    
-    // In-memory storage for reset codes (for production, use Redis or database)
-    private static readonly ConcurrentDictionary<string, ResetCodeData> _resetCodes = new();
 
     public PasswordResetService(
         IUserRepository userRepository,
         IEmailService emailService,
+        LibraryDbContext context,
         ILogger<PasswordResetService> logger)
     {
         _userRepository = userRepository;
         _emailService = emailService;
+        _context = context;
         _logger = logger;
     }
 
@@ -28,13 +31,12 @@ public class PasswordResetService : IPasswordResetService
     {
         try
         {
-            // Find user
             var user = await _userRepository.GetByEmailAsync(email);
-            
-            // Don't reveal if user exists for security
+
+            // Don't reveal whether the email exists
             if (user == null)
             {
-                _logger.LogWarning("Password reset requested for non-existent email: {Email}", email);
+                _logger.LogWarning("Password reset requested for non-existent email");
                 return new PasswordResetResponse
                 {
                     Success = true,
@@ -42,23 +44,30 @@ public class PasswordResetService : IPasswordResetService
                 };
             }
 
-            // Generate 6-digit code
+            // Invalidate any existing unused codes for this user
+            var existingTokens = await _context.PasswordResetTokens
+                .Where(t => t.UserId == user.Id && !t.IsUsed)
+                .ToListAsync();
+
+            foreach (var token in existingTokens)
+                token.IsUsed = true;
+
+            // Generate new code and persist it
             var resetCode = GenerateResetCode();
-            var expiryTime = DateTime.UtcNow.AddMinutes(15);
-
-            // Store code
-            var emailKey = email.ToLower();
-            _resetCodes[emailKey] = new ResetCodeData
+            _context.PasswordResetTokens.Add(new PasswordResetToken
             {
+                UserId = user.Id,
                 Code = resetCode,
-                ExpiryTime = expiryTime,
-                UserId = user.Id
-            };
+                ExpiryTime = DateTime.UtcNow.AddMinutes(15),
+                IsUsed = false,
+                CreatedAt = DateTime.UtcNow
+            });
 
-            // Send email
+            await _context.SaveChangesAsync();
+
             await _emailService.SendPasswordResetEmailAsync(email, user.Name, resetCode);
 
-            _logger.LogInformation("Password reset code sent to {Email}", email);
+            _logger.LogInformation("Password reset code sent to user {UserId}", user.Id);
 
             return new PasswordResetResponse
             {
@@ -68,7 +77,7 @@ public class PasswordResetService : IPasswordResetService
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Error requesting password reset for {Email}", email);
+            _logger.LogError(ex, "Error requesting password reset");
             throw new InvalidOperationException("Failed to process password reset request");
         }
     }
@@ -77,87 +86,53 @@ public class PasswordResetService : IPasswordResetService
     {
         try
         {
-            var emailKey = email.ToLower();
-            
-            // Verify code exists
-            if (!_resetCodes.TryGetValue(emailKey, out var storedData))
-            {
-                return new PasswordResetResponse
-                {
-                    Success = false,
-                    Message = "Invalid or expired reset code"
-                };
-            }
-
-            // Check expiry
-            if (storedData.ExpiryTime < DateTime.UtcNow)
-            {
-                _resetCodes.TryRemove(emailKey, out _);
-                return new PasswordResetResponse
-                {
-                    Success = false,
-                    Message = "Reset code has expired"
-                };
-            }
-
-            // Verify code matches
-            if (storedData.Code != resetCode)
-            {
-                return new PasswordResetResponse
-                {
-                    Success = false,
-                    Message = "Invalid reset code"
-                };
-            }
-
-            // Get user
             var user = await _userRepository.GetByEmailAsync(email);
             if (user == null)
             {
-                return new PasswordResetResponse
-                {
-                    Success = false,
-                    Message = "User not found"
-                };
+                return new PasswordResetResponse { Success = false, Message = "Invalid or expired reset code" };
             }
 
-            // Update password
+            var token = await _context.PasswordResetTokens
+                .Where(t => t.UserId == user.Id && t.Code == resetCode && !t.IsUsed)
+                .OrderByDescending(t => t.CreatedAt)
+                .FirstOrDefaultAsync();
+
+            if (token == null)
+            {
+                return new PasswordResetResponse { Success = false, Message = "Invalid or expired reset code" };
+            }
+
+            if (token.ExpiryTime < DateTime.UtcNow)
+            {
+                token.IsUsed = true;
+                await _context.SaveChangesAsync();
+                return new PasswordResetResponse { Success = false, Message = "Reset code has expired" };
+            }
+
             user.PasswordHash = BCrypt.Net.BCrypt.HashPassword(newPassword);
-            //user.UpdatedAt = DateTime.UtcNow;
-            
+            token.IsUsed = true;
+
             await _userRepository.UpdateAsync(user);
+            await _context.SaveChangesAsync();
 
-            // Remove used code
-            _resetCodes.TryRemove(emailKey, out _);
+            _logger.LogInformation("Password reset successful for user {UserId}", user.Id);
 
-            _logger.LogInformation("Password reset successful for {Email}", email);
-
-            // Send confirmation email
             await _emailService.SendPasswordResetConfirmationAsync(email, user.Name);
 
-            return new PasswordResetResponse
-            {
-                Success = true,
-                Message = "Password reset successful"
-            };
+            return new PasswordResetResponse { Success = true, Message = "Password reset successful" };
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Error resetting password for {Email}", email);
+            _logger.LogError(ex, "Error resetting password");
             throw new InvalidOperationException("Failed to reset password");
         }
     }
 
     private static string GenerateResetCode()
     {
-        var random = new Random();
-        return random.Next(100000, 999999).ToString();
-    }
-
-    private class ResetCodeData
-    {
-        public string Code { get; set; } = string.Empty;
-        public DateTime ExpiryTime { get; set; }
-        public int UserId { get; set; }
+        var bytes = new byte[4];
+        RandomNumberGenerator.Fill(bytes);
+        var value = Math.Abs(BitConverter.ToInt32(bytes)) % 900000 + 100000;
+        return value.ToString();
     }
 }

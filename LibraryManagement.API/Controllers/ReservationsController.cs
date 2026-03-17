@@ -39,16 +39,8 @@ public class ReservationsController : ControllerBase
     [Authorize(Roles = "Admin,Librarian")]
     public async Task<ActionResult<List<ReservationDto>>> GetAllReservations()
     {
-        var users = await _userRepository.GetAllAsync();
-        var allReservations = new List<Reservation>();
-        
-        foreach (var user in users)
-        {
-            var userReservations = await _reservationRepository.GetByUserIdAsync(user.Id);
-            allReservations.AddRange(userReservations);
-        }
-
-        return Ok(allReservations.Select(MapToDto));
+        var reservations = await _reservationRepository.GetAllAsync();
+        return Ok(reservations.Select(MapToDto));
     }
 
     [HttpGet("my")]

@@ -25,7 +25,16 @@ namespace LibraryManagement.Infrastructure.Services
         {
             while (!stoppingToken.IsCancellationRequested)
             {
-                await CheckDueDates();
+                try
+                {
+                    await CheckDueDates();
+                }
+                catch (Exception ex)
+                {
+                    // Log and continue — don't let a single failure kill the hosted service permanently
+                    _logger.LogError(ex, "Error during due date notification check");
+                }
+
                 await Task.Delay(TimeSpan.FromHours(24), stoppingToken); // Check daily
             }
         }
@@ -37,19 +46,19 @@ namespace LibraryManagement.Infrastructure.Services
             var notificationService = scope.ServiceProvider.GetRequiredService<INotificationService>();
 
             var loans = await loanRepo.GetActiveLoansAsync();
+            var targetDate = DateTime.UtcNow.Date.AddDays(3);
+
             foreach (var loan in loans)
             {
-                var daysUntilDue = (loan.DueDate - DateTime.UtcNow).Days;
-
-                // Notify 3 days before due date
-                if (daysUntilDue == 3)
+                // Use date comparison to avoid time-of-day drift (e.g. service runs at 2am vs 11pm)
+                if (loan.DueDate.Date == targetDate)
                 {
                     await notificationService.NotifyLoanDueSoonAsync(
                         loan.UserId, loan.Id, loan.Book?.Title ?? "", loan.DueDate);
                 }
             }
 
-            _logger.LogInformation("Due date check completed");
+            _logger.LogInformation("Due date check completed. Active loans checked: {Count}", loans.Count);
         }
     }
 }
