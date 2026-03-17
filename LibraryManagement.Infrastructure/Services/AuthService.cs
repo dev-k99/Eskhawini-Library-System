@@ -73,11 +73,7 @@ public class AuthService : IAuthService
 
     public async Task<AuthResponse> RefreshTokenAsync(string refreshToken)
     {
-        // Find user with this refresh token
-        var users = await _userRepository.GetAllAsync();
-        var user = users.FirstOrDefault(u => 
-            u.RefreshToken == refreshToken && 
-            u.RefreshTokenExpiry > DateTime.UtcNow);
+        var user = await _userRepository.GetByRefreshTokenAsync(refreshToken);
 
         if (user == null)
         {

@@ -15,6 +15,7 @@ public class LibraryDbContext : DbContext
     public DbSet<Reservation> Reservations => Set<Reservation>();
     public DbSet<AnalyticsLog> AnalyticsLogs => Set<AnalyticsLog>();
     public DbSet<SustainabilityMetric> SustainabilityMetrics => Set<SustainabilityMetric>();
+    public DbSet<PasswordResetToken> PasswordResetTokens => Set<PasswordResetToken>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -103,6 +104,19 @@ public class LibraryDbContext : DbContext
             entity.HasOne(e => e.Loan)
                 .WithOne(l => l.SustainabilityMetric)
                 .HasForeignKey<SustainabilityMetric>(e => e.LoanId)
+                .OnDelete(DeleteBehavior.Cascade);
+        });
+
+        // PasswordResetToken configuration
+        modelBuilder.Entity<PasswordResetToken>(entity =>
+        {
+            entity.HasKey(e => e.Id);
+            entity.HasIndex(e => new { e.UserId, e.IsUsed });
+            entity.Property(e => e.Code).HasMaxLength(6).IsRequired();
+
+            entity.HasOne(e => e.User)
+                .WithMany()
+                .HasForeignKey(e => e.UserId)
                 .OnDelete(DeleteBehavior.Cascade);
         });
 
@@ -259,7 +273,7 @@ public class LibraryDbContext : DbContext
             Status = BookStatus.Available,
             TotalCopies = 3,
             AvailableCopies = 3,
-            Description = "A deep dive into JavaScript’s core mechanisms",
+            Description = "A deep dive into JavaScriptï¿½s core mechanisms",
             CreatedAt = DateTime.UtcNow
         },
         new Book
@@ -285,7 +299,7 @@ public class LibraryDbContext : DbContext
             Status = BookStatus.Available,
             TotalCopies = 4,
             AvailableCopies = 4,
-            Description = "Exploration of the universe’s origins and structure",
+            Description = "Exploration of the universeï¿½s origins and structure",
             CreatedAt = DateTime.UtcNow
         },
         new Book
@@ -389,7 +403,7 @@ public class LibraryDbContext : DbContext
             Status = BookStatus.Available,
             TotalCopies = 3,
             AvailableCopies = 3,
-            Description = "Classic history of Rome’s fall",
+            Description = "Classic history of Romeï¿½s fall",
             CreatedAt = DateTime.UtcNow
         },
         new Book
