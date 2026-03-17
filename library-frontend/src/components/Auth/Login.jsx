@@ -3,6 +3,8 @@ import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { BookOpen, Mail, Lock, ArrowRight, Loader2 } from 'lucide-react';
 
+const isDemoMode = import.meta.env.VITE_DEMO_MODE === 'true';
+
 export default function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -122,29 +124,31 @@ export default function Login() {
             </button>
           </form>
 
-          <div className="mt-6 pt-6 border-t border-gray-100">
-            <p className="text-sm text-gray-600 text-center mb-4 font-medium">Demo Credentials</p>
-            <div className="grid grid-cols-3 gap-2">
-              <button
-                onClick={() => fillDemoCredentials('admin')}
-                className="px-3 py-2 text-xs font-semibold bg-purple-50 hover:bg-purple-100 text-purple-700 border border-purple-200 rounded-lg transition-all"
-              >
-                Admin
-              </button>
-              <button
-                onClick={() => fillDemoCredentials('librarian')}
-                className="px-3 py-2 text-xs font-semibold bg-blue-50 hover:bg-blue-100 text-blue-700 border border-blue-200 rounded-lg transition-all"
-              >
-                Librarian
-              </button>
-              <button
-                onClick={() => fillDemoCredentials('patron')}
-                className="px-3 py-2 text-xs font-semibold bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border border-emerald-200 rounded-lg transition-all"
-              >
-                Patron
-              </button>
+          {isDemoMode && (
+            <div className="mt-6 pt-6 border-t border-gray-100">
+              <p className="text-sm text-gray-600 text-center mb-4 font-medium">Demo Credentials</p>
+              <div className="grid grid-cols-3 gap-2">
+                <button
+                  onClick={() => fillDemoCredentials('admin')}
+                  className="px-3 py-2 text-xs font-semibold bg-purple-50 hover:bg-purple-100 text-purple-700 border border-purple-200 rounded-lg transition-all"
+                >
+                  Admin
+                </button>
+                <button
+                  onClick={() => fillDemoCredentials('librarian')}
+                  className="px-3 py-2 text-xs font-semibold bg-blue-50 hover:bg-blue-100 text-blue-700 border border-blue-200 rounded-lg transition-all"
+                >
+                  Librarian
+                </button>
+                <button
+                  onClick={() => fillDemoCredentials('patron')}
+                  className="px-3 py-2 text-xs font-semibold bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border border-emerald-200 rounded-lg transition-all"
+                >
+                  Patron
+                </button>
+              </div>
             </div>
-          </div>
+          )}
         </div>
 
         <p className="text-center text-sm text-gray-600 mt-6">
