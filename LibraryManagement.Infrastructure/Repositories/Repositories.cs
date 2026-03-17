@@ -25,18 +25,16 @@ public class UserRepository : IUserRepository
         return await _context.Users.FirstOrDefaultAsync(u => u.Email.ToLower() == email.ToLower());
     }
 
+    public async Task<User?> GetByRefreshTokenAsync(string refreshToken)
+    {
+        return await _context.Users.FirstOrDefaultAsync(u =>
+            u.RefreshToken == refreshToken && u.RefreshTokenExpiry > DateTime.UtcNow);
+    }
+
     public async Task<List<User>> GetAllAsync()
     {
         return await _context.Users.OrderBy(u => u.Name).ToListAsync();
     }
-    //public async Task<List<Loan>> GetAllAsync()
-    //{
-    //    return await _context.Loans
-    //        .Include(l => l.Book)
-    //        .Include(l => l.User)
-    //        .OrderByDescending(l => l.CheckoutDate)
-    //        .ToListAsync();
-    //}
     public async Task<User> CreateAsync(User user)
     {
         _context.Users.Add(user);
@@ -232,6 +230,15 @@ public class ReservationRepository : IReservationRepository
             .Include(r => r.User)
             .Include(r => r.Book)
             .FirstOrDefaultAsync(r => r.Id == id);
+    }
+
+    public async Task<List<Reservation>> GetAllAsync()
+    {
+        return await _context.Reservations
+            .Include(r => r.User)
+            .Include(r => r.Book)
+            .OrderByDescending(r => r.ReservationDate)
+            .ToListAsync();
     }
 
     public async Task<List<Reservation>> GetByUserIdAsync(int userId)
