@@ -1,19 +1,27 @@
 using System.Text;
+using System.Threading.RateLimiting;
 using LibraryManagement.API.Hubs;
+using LibraryManagement.API.Middleware;
 using LibraryManagement.Core.Interfaces;
 using LibraryManagement.Infrastructure.Data;
 using LibraryManagement.Infrastructure.Repositories;
 using LibraryManagement.Infrastructure.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container
+// ── Startup Validation ─────────────────────────────────────────────────────────
+var jwtSecret = builder.Configuration["JwtSettings:Secret"];
+if (string.IsNullOrWhiteSpace(jwtSecret) || jwtSecret.Contains("SET_VIA_ENV"))
+    throw new InvalidOperationException(
+        "JwtSettings:Secret is not configured. Set it via environment variable or user secrets.");
 
-// Database
+// ── Database ───────────────────────────────────────────────────────────────────
 builder.Services.AddDbContext<LibraryDbContext>(options =>
     options.UseNpgsql(
         builder.Configuration.GetConnectionString("DefaultConnection"),
@@ -21,8 +29,7 @@ builder.Services.AddDbContext<LibraryDbContext>(options =>
     )
 );
 
-
-// Repositories
+// ── Repositories ───────────────────────────────────────────────────────────────
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IBookRepository, BookRepository>();
 builder.Services.AddScoped<ILoanRepository, LoanRepository>();
@@ -30,17 +37,15 @@ builder.Services.AddScoped<IReservationRepository, ReservationRepository>();
 builder.Services.AddScoped<IAnalyticsRepository, AnalyticsRepository>();
 builder.Services.AddScoped<ISustainabilityRepository, SustainabilityRepository>();
 
-
-// Register email service
+// ── Services ───────────────────────────────────────────────────────────────────
 builder.Services.AddScoped<IEmailService, EmailService>();
 builder.Services.AddScoped<IPasswordResetService, PasswordResetService>();
-builder.Services.AddHostedService<NotificationBackgroundService>();
-// Services
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IQRCodeService, QRCodeService>();
 builder.Services.AddScoped<INotificationService, NotificationService>();
+builder.Services.AddHostedService<NotificationBackgroundService>();
 
-// JWT Authentication
+// ── JWT Authentication ─────────────────────────────────────────────────────────
 var jwtSettings = builder.Configuration.GetSection("JwtSettings");
 builder.Services.AddAuthentication(options =>
 {
@@ -58,10 +63,10 @@ builder.Services.AddAuthentication(options =>
         ValidIssuer = jwtSettings["Issuer"],
         ValidAudience = jwtSettings["Audience"],
         IssuerSigningKey = new SymmetricSecurityKey(
-            Encoding.UTF8.GetBytes(jwtSettings["Secret"]!))
+            Encoding.UTF8.GetBytes(jwtSecret))
     };
 
-    // Configure SignalR authentication via query string
+    // Allow SignalR to receive JWT via query string (required for WebSocket upgrade)
     options.Events = new JwtBearerEvents
     {
         OnMessageReceived = context =>
@@ -79,28 +84,49 @@ builder.Services.AddAuthentication(options =>
 
 builder.Services.AddAuthorization();
 
-// Controllers
+// ── Rate Limiting ──────────────────────────────────────────────────────────────
+builder.Services.AddRateLimiter(options =>
+{
+    options.AddFixedWindowLimiter("auth", config =>
+    {
+        config.PermitLimit = 10;
+        config.Window = TimeSpan.FromMinutes(1);
+        config.QueueLimit = 0;
+    });
+    options.RejectionStatusCode = StatusCodes.Status429TooManyRequests;
+});
+
+// ── Controllers ────────────────────────────────────────────────────────────────
 builder.Services.AddControllers();
 
-// SignalR
+// ── SignalR ────────────────────────────────────────────────────────────────────
 builder.Services.AddSignalR();
 
-// CORS
+// ── CORS (driven by configuration — set Cors:AllowedOrigins in appsettings/env) ─
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowFrontend", policy =>
     {
-        policy.WithOrigins(
-                "http://localhost:5173",
-                "http://localhost:3000",
-                "https://localhost:5173")
-            .AllowAnyMethod()
-            .AllowAnyHeader()
-            .AllowCredentials();
+        var origins = builder.Configuration
+            .GetSection("Cors:AllowedOrigins")
+            .Get<string[]>() ?? [];
+
+        policy.WithOrigins(origins)
+              .AllowAnyMethod()
+              .AllowAnyHeader()
+              .AllowCredentials();
     });
 });
 
-// Swagger
+// ── Health Checks ──────────────────────────────────────────────────────────────
+builder.Services.AddHealthChecks()
+    .AddNpgSql(
+        builder.Configuration.GetConnectionString("DefaultConnection")!,
+        name: "postgresql",
+        failureStatus: HealthStatus.Unhealthy,
+        tags: ["db", "ready"]);
+
+// ── Swagger ────────────────────────────────────────────────────────────────────
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>
 {
@@ -108,12 +134,12 @@ builder.Services.AddSwaggerGen(c =>
     {
         Title = "Library Management API",
         Version = "v1",
-        Description = "A comprehensive library management system with AI recommendations, QR codes, and real-time updates"
+        Description = "A comprehensive library management system with QR codes and real-time updates"
     });
 
     c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
     {
-        Description = "JWT Authorization header using the Bearer scheme. Enter 'Bearer' [space] and then your token",
+        Description = "JWT Authorization header. Enter 'Bearer' [space] and your token.",
         Name = "Authorization",
         In = ParameterLocation.Header,
         Type = SecuritySchemeType.ApiKey,
@@ -125,11 +151,7 @@ builder.Services.AddSwaggerGen(c =>
         {
             new OpenApiSecurityScheme
             {
-                Reference = new OpenApiReference
-                {
-                    Type = ReferenceType.SecurityScheme,
-                    Id = "Bearer"
-                }
+                Reference = new OpenApiReference { Type = ReferenceType.SecurityScheme, Id = "Bearer" }
             },
             Array.Empty<string>()
         }
@@ -138,7 +160,27 @@ builder.Services.AddSwaggerGen(c =>
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline
+// ── Apply Migrations on Startup (all environments) ─────────────────────────────
+using (var scope = app.Services.CreateScope())
+{
+    var db = scope.ServiceProvider.GetRequiredService<LibraryDbContext>();
+    var logger = scope.ServiceProvider.GetRequiredService<ILogger<Program>>();
+    try
+    {
+        db.Database.Migrate();
+        logger.LogInformation("Database migrations applied successfully");
+    }
+    catch (Exception ex)
+    {
+        logger.LogError(ex, "Failed to apply database migrations");
+        throw; // Fail fast — don't run with a stale schema
+    }
+}
+
+// ── Middleware Pipeline ────────────────────────────────────────────────────────
+// Global exception handler must be first so it catches everything downstream
+app.UseMiddleware<GlobalExceptionMiddleware>();
+
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
@@ -151,18 +193,22 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 app.UseCors("AllowFrontend");
+app.UseRateLimiter();
 app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
 app.MapHub<LibraryHub>("/hubs/library");
 
-// Apply migrations and seed data in development
-if (app.Environment.IsDevelopment())
+// Health check endpoints (no auth required)
+app.MapHealthChecks("/health");
+app.MapHealthChecks("/health/ready", new Microsoft.AspNetCore.Diagnostics.HealthChecks.HealthCheckOptions
 {
-    using var scope = app.Services.CreateScope();
-    var db = scope.ServiceProvider.GetRequiredService<LibraryDbContext>();
-    db.Database.Migrate();
-}
+    Predicate = check => check.Tags.Contains("ready")
+});
+app.MapHealthChecks("/health/live", new Microsoft.AspNetCore.Diagnostics.HealthChecks.HealthCheckOptions
+{
+    Predicate = _ => false  // Always returns 200 — liveness probe for Azure
+});
 
 app.Run();
