@@ -1,39 +1,39 @@
 import { Link } from 'react-router-dom';
-import { 
-  BookOpen, 
-  Zap, 
-  Shield, 
-  TrendingUp, 
-  Users, 
+import {
+  BookOpen,
+  Zap,
+  Shield,
+  TrendingUp,
+  Users,
   Leaf,
   ArrowRight,
   CheckCircle,
   Clock,
   BarChart3
 } from 'lucide-react';
+import bgPhoto from '../../Background-photo.jpg';
 
 export default function LandingPage() {
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Navigation */}
-      <nav className="fixed top-0 left-0 right-0 z-50 bg-white/80 backdrop-blur-md border-b border-gray-200">
+
+      {/* Navigation — glass morphism over hero photo */}
+      <nav className="fixed top-0 left-0 right-0 z-50 bg-black/30 backdrop-blur-md border-b border-white/10">
         <div className="max-w-7xl mx-auto px-6 lg:px-8">
           <div className="flex items-center justify-between h-20">
-            {/* Logo */}
             <div className="flex items-center gap-3">
-              <div className="w-11 h-11 bg-blue-600 rounded-xl flex items-center justify-center">
+              <div className="w-11 h-11 bg-white/20 border border-white/30 rounded-xl flex items-center justify-center backdrop-blur-sm">
                 <BookOpen className="h-6 w-6 text-white" strokeWidth={2.5} />
               </div>
               <div>
-                <h1 className="text-2xl font-bold text-gray-900 tracking-tight">LibraryOS</h1>
-                <p className="text-xs text-gray-500 -mt-0.5">Modern Library Management</p>
+                <h1 className="text-2xl font-bold text-white tracking-tight">LibraryOS</h1>
+                <p className="text-xs text-white/60 -mt-0.5">Modern Library Management</p>
               </div>
             </div>
 
-            {/* CTA */}
-            <Link 
-              to="/login" 
-              className="px-6 py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg transition-all duration-200 shadow-sm hover:shadow-md"
+            <Link
+              to="/login"
+              className="px-6 py-2.5 bg-white text-gray-900 hover:bg-gray-100 font-semibold rounded-lg transition-all duration-200 shadow-sm"
             >
               Sign In
             </Link>
@@ -41,63 +41,59 @@ export default function LandingPage() {
         </div>
       </nav>
 
-      {/* Hero Section */}
-      <section className="pt-32 pb-20 px-6 lg:px-8">
-        <div className="max-w-7xl mx-auto">
-          <div className="text-center max-w-4xl mx-auto">
-            <div className="inline-flex items-center gap-2 px-4 py-2 bg-blue-50 border border-blue-100 rounded-full mb-8 animate-fade-in">
-              <Zap className="h-4 w-4 text-blue-600" />
-              <span className="text-sm font-semibold text-blue-700">Powering Modern Libraries</span>
-            </div>
-            
-            <h1 
-              className="text-6xl lg:text-7xl font-bold text-gray-900 mb-6 leading-tight tracking-tight animate-slide-up"
-              style={{ fontFamily: '"SF Pro Display", -apple-system, BlinkMacSystemFont, sans-serif' }}
+      {/* Hero — full screen background photo */}
+      <section
+        className="relative min-h-screen flex items-center justify-center px-6 lg:px-8"
+        style={{
+          backgroundImage: `url(${bgPhoto})`,
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+          backgroundAttachment: 'fixed',
+        }}
+      >
+        {/* Dark gradient overlay */}
+        <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/50 to-black/70" />
+
+        <div className="relative z-10 text-center max-w-4xl mx-auto">
+          <div className="inline-flex items-center gap-2 px-4 py-2 bg-white/10 border border-white/20 rounded-full mb-8 backdrop-blur-sm animate-fade-in">
+            <Zap className="h-4 w-4 text-yellow-400" />
+            <span className="text-sm font-semibold text-white">Powering Modern Libraries</span>
+          </div>
+
+          <h1
+            className="text-6xl lg:text-7xl font-bold text-white mb-6 leading-tight tracking-tight animate-slide-up"
+            style={{ fontFamily: '"SF Pro Display", -apple-system, BlinkMacSystemFont, sans-serif' }}
+          >
+            Library Management,
+            <br />
+            <span className="text-blue-400">Reimagined</span>
+          </h1>
+
+          <p className="text-xl text-white/80 mb-10 max-w-2xl mx-auto leading-relaxed animate-slide-up-delay">
+            Transform your library operations with intelligent automation, real-time insights,
+            and seamless user experiences. Built for librarians, loved by patrons.
+          </p>
+
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-4 animate-slide-up-delay-2">
+            <Link
+              to="/login"
+              className="group px-8 py-4 bg-blue-600 hover:bg-blue-500 text-white font-semibold rounded-xl transition-all duration-200 shadow-lg hover:shadow-xl flex items-center gap-2"
             >
-              Library Management,
-              <br />
-              <span className="text-blue-600">Reimagined</span>
-            </h1>
-            
-            <p className="text-xl text-gray-600 mb-10 max-w-2xl mx-auto leading-relaxed animate-slide-up-delay">
-              Transform your library operations with intelligent automation, real-time insights, 
-              and seamless user experiences. Built for librarians, loved by patrons.
-            </p>
-
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-4 animate-slide-up-delay-2">
-              <Link 
-                to="/login" 
-                className="group px-8 py-4 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-xl transition-all duration-200 shadow-lg hover:shadow-xl flex items-center gap-2"
-              >
-                Get Started
-                <ArrowRight className="h-5 w-5 group-hover:translate-x-1 transition-transform" />
-              </Link>
-            </div>
+              Get Started
+              <ArrowRight className="h-5 w-5 group-hover:translate-x-1 transition-transform" />
+            </Link>
           </div>
+        </div>
 
-          {/* Hero Visual */}
-          <div className="mt-20 relative animate-fade-in-slow">
-            <div className="absolute inset-0 bg-blue-100 rounded-3xl transform rotate-1"></div>
-            <div className="relative bg-white rounded-2xl shadow-2xl border border-gray-200 overflow-hidden">
-              <div className="p-8">
-                <div className="grid grid-cols-3 gap-4 mb-6">
-                  <div className="h-3 bg-gray-200 rounded"></div>
-                  <div className="h-3 bg-gray-200 rounded"></div>
-                  <div className="h-3 bg-gray-200 rounded"></div>
-                </div>
-                <div className="space-y-4">
-                  <div className="h-16 bg-blue-50 border border-blue-100 rounded-lg"></div>
-                  <div className="h-16 bg-gray-50 border border-gray-100 rounded-lg"></div>
-                  <div className="h-16 bg-gray-50 border border-gray-100 rounded-lg"></div>
-                </div>
-              </div>
-            </div>
-          </div>
+        {/* Scroll indicator */}
+        <div className="absolute bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center gap-1 animate-bounce">
+          <div className="w-0.5 h-8 bg-white/40 rounded-full" />
+          <div className="w-1.5 h-1.5 bg-white/40 rounded-full" />
         </div>
       </section>
 
       {/* Stats Section */}
-      <section className="py-16 px-6 lg:px-8 bg-white border-y border-gray-200">
+      <section className="py-16 px-6 lg:px-8 bg-white border-b border-gray-200">
         <div className="max-w-7xl mx-auto">
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-8">
             {[
@@ -108,7 +104,7 @@ export default function LandingPage() {
             ].map((stat, index) => (
               <div key={index} className="text-center">
                 <div className="text-4xl lg:text-5xl font-bold text-gray-900 mb-2">{stat.number}</div>
-                <div className="text-sm text-gray-600 font-medium">{stat.label}</div>
+                <div className="text-sm text-gray-500 font-medium">{stat.label}</div>
               </div>
             ))}
           </div>
@@ -116,12 +112,10 @@ export default function LandingPage() {
       </section>
 
       {/* Features Grid */}
-      <section className="py-24 px-6 lg:px-8">
+      <section className="py-24 px-6 lg:px-8 bg-gray-50">
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-16">
-            <h2 className="text-4xl lg:text-5xl font-bold text-gray-900 mb-4">
-              Everything You Need
-            </h2>
+            <h2 className="text-4xl lg:text-5xl font-bold text-gray-900 mb-4">Everything You Need</h2>
             <p className="text-xl text-gray-600 max-w-2xl mx-auto">
               Comprehensive features designed to streamline every aspect of library management
             </p>
@@ -129,46 +123,16 @@ export default function LandingPage() {
 
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
             {[
-              {
-                icon: BookOpen,
-                title: 'Smart Cataloging',
-                description: 'Effortlessly organize and manage your entire collection with intelligent categorization and search.',
-                color: 'blue'
-              },
-              {
-                icon: Zap,
-                title: 'Lightning Fast',
-                description: 'Real-time updates and instant search results ensure smooth operations for staff and patrons.',
-                color: 'yellow'
-              },
-              {
-                icon: Shield,
-                title: 'Secure & Reliable',
-                description: 'Enterprise-grade security with role-based access control and automated backups.',
-                color: 'green'
-              },
-              {
-                icon: BarChart3,
-                title: 'Analytics Dashboard',
-                description: 'Gain actionable insights with comprehensive reporting and visual analytics.',
-                color: 'purple'
-              },
-              {
-                icon: Users,
-                title: 'User Management',
-                description: 'Streamlined patron registration, profiles, and borrowing history tracking.',
-                color: 'red'
-              },
-              {
-                icon: Leaf,
-                title: 'Eco-Friendly',
-                description: 'Track sustainability metrics and reduce environmental impact with digital-first workflows.',
-                color: 'emerald'
-              }
+              { icon: BookOpen, title: 'Smart Cataloging', description: 'Effortlessly organize and manage your entire collection with intelligent categorization and search.', color: 'blue' },
+              { icon: Zap, title: 'Lightning Fast', description: 'Real-time updates and instant search results ensure smooth operations for staff and patrons.', color: 'yellow' },
+              { icon: Shield, title: 'Secure & Reliable', description: 'Enterprise-grade security with role-based access control and automated backups.', color: 'green' },
+              { icon: BarChart3, title: 'Analytics Dashboard', description: 'Gain actionable insights with comprehensive reporting and visual analytics.', color: 'purple' },
+              { icon: Users, title: 'User Management', description: 'Streamlined patron registration, profiles, and borrowing history tracking.', color: 'red' },
+              { icon: Leaf, title: 'Eco-Friendly', description: 'Track sustainability metrics and reduce environmental impact with digital-first workflows.', color: 'emerald' }
             ].map((feature, index) => (
-              <div 
-                key={index} 
-                className="group p-8 bg-white border-2 border-gray-100 hover:border-gray-200 rounded-2xl transition-all duration-300 hover:shadow-xl"
+              <div
+                key={index}
+                className="group p-8 bg-white border-2 border-gray-100 hover:border-blue-200 rounded-2xl transition-all duration-300 hover:shadow-xl"
               >
                 <div className={`w-14 h-14 bg-${feature.color}-100 rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform`}>
                   <feature.icon className={`h-7 w-7 text-${feature.color}-600`} strokeWidth={2} />
@@ -186,14 +150,11 @@ export default function LandingPage() {
         <div className="max-w-7xl mx-auto">
           <div className="grid lg:grid-cols-2 gap-16 items-center">
             <div>
-              <h2 className="text-4xl lg:text-5xl font-bold text-white mb-6">
-                Built for Modern Libraries
-              </h2>
+              <h2 className="text-4xl lg:text-5xl font-bold text-white mb-6">Built for Modern Libraries</h2>
               <p className="text-xl text-blue-100 mb-8">
-                LibraryOS combines cutting-edge technology with intuitive design to deliver 
+                LibraryOS combines cutting-edge technology with intuitive design to deliver
                 the ultimate library management experience.
               </p>
-              
               <div className="space-y-4">
                 {[
                   'Automated loan processing and notifications',
@@ -229,18 +190,26 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* CTA Section */}
-      <section className="py-24 px-6 lg:px-8 bg-gray-900">
-        <div className="max-w-4xl mx-auto text-center">
+      {/* CTA Section — background photo again */}
+      <section
+        className="relative py-32 px-6 lg:px-8"
+        style={{
+          backgroundImage: `url(${bgPhoto})`,
+          backgroundSize: 'cover',
+          backgroundPosition: 'center top',
+        }}
+      >
+        <div className="absolute inset-0 bg-gray-900/80" />
+        <div className="relative z-10 max-w-4xl mx-auto text-center">
           <h2 className="text-4xl lg:text-5xl font-bold text-white mb-6">
             Ready to Transform Your Library?
           </h2>
-          <p className="text-xl text-gray-400 mb-10">
-            Join hundreds of libraries already using LibraryOS to deliver exceptional service.
+          <p className="text-xl text-gray-300 mb-10">
+            Join libraries already using LibraryOS to deliver exceptional service.
           </p>
-          <Link 
-            to="/login" 
-            className="inline-flex items-center gap-2 px-10 py-5 bg-blue-600 hover:bg-blue-700 text-white text-lg font-semibold rounded-xl transition-all duration-200 shadow-xl hover:shadow-2xl"
+          <Link
+            to="/login"
+            className="inline-flex items-center gap-2 px-10 py-5 bg-blue-600 hover:bg-blue-500 text-white text-lg font-semibold rounded-xl transition-all duration-200 shadow-xl hover:shadow-2xl"
           >
             Get Started Free
             <ArrowRight className="h-5 w-5" />
@@ -261,7 +230,6 @@ export default function LandingPage() {
                 <div className="text-sm text-gray-500">© 2026 All rights reserved</div>
               </div>
             </div>
-            
             <div className="flex gap-8 text-sm text-gray-400">
               <a href="#" className="hover:text-white transition-colors">Privacy Policy</a>
               <a href="#" className="hover:text-white transition-colors">Terms of Service</a>
@@ -271,47 +239,19 @@ export default function LandingPage() {
         </div>
       </footer>
 
-      {/* Animation Styles */}
       <style>{`
         @keyframes fade-in {
-          from {
-            opacity: 0;
-          }
-          to {
-            opacity: 1;
-          }
+          from { opacity: 0; }
+          to { opacity: 1; }
         }
-
         @keyframes slide-up {
-          from {
-            opacity: 0;
-            transform: translateY(30px);
-          }
-          to {
-            opacity: 1;
-            transform: translateY(0);
-          }
+          from { opacity: 0; transform: translateY(30px); }
+          to { opacity: 1; transform: translateY(0); }
         }
-
-        .animate-fade-in {
-          animation: fade-in 0.6s ease-out;
-        }
-
-        .animate-fade-in-slow {
-          animation: fade-in 1.2s ease-out;
-        }
-
-        .animate-slide-up {
-          animation: slide-up 0.8s ease-out;
-        }
-
-        .animate-slide-up-delay {
-          animation: slide-up 0.8s ease-out 0.2s both;
-        }
-
-        .animate-slide-up-delay-2 {
-          animation: slide-up 0.8s ease-out 0.4s both;
-        }
+        .animate-fade-in { animation: fade-in 0.6s ease-out; }
+        .animate-slide-up { animation: slide-up 0.8s ease-out; }
+        .animate-slide-up-delay { animation: slide-up 0.8s ease-out 0.2s both; }
+        .animate-slide-up-delay-2 { animation: slide-up 0.8s ease-out 0.4s both; }
       `}</style>
     </div>
   );
