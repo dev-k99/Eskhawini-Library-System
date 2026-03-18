@@ -31,7 +31,7 @@ export default function Login() {
   const fillDemoCredentials = (role) => {
     const credentials = {
       admin: { email: 'admin@library.com', password: 'Admin123!' },
-      librarian: { email: 'librarian@library.com', password: 'Librarian123!' },
+      librarian: { email: 'librarian@library.com', password: 'Lib123!' },
       patron: { email: 'patron@library.com', password: 'Patron123!' }
     };
     
